@@ -1,5 +1,4 @@
-name: platform_design
-description: A project showcasing a Flutter app following different platform IA conventions.
+name: running_society
 version: 1.0.0+1
 
 environment:
