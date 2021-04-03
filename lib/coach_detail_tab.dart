@@ -1,25 +1,21 @@
-// Copyright 2020 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'widgets.dart';
 
-/// Page shown when a card in the songs tab is tapped.
+/// Page shown when a card in the coachs tab is tapped.
 ///
 /// On Android, this page sits at the top of your app. On iOS, this page is on
-/// top of the songs tab's content but is below the tab bar itself.
-class SongDetailTab extends StatelessWidget {
-  const SongDetailTab({
+/// top of the coachs tab's content but is below the tab bar itself.
+class CoachDetailTab extends StatelessWidget {
+  const CoachDetailTab({
     required this.id,
-    required this.song,
+    required this.coach,
     required this.color,
   });
 
   final int id;
-  final String song;
+  final String coach;
   final Color color;
 
   Widget _buildBody() {
@@ -32,19 +28,19 @@ class SongDetailTab extends StatelessWidget {
         children: [
           Hero(
             tag: id,
-            child: HeroAnimatingSongCard(
-              song: song,
+            child: HeroAnimatingCoachCard(
+              coach: coach,
               color: color,
               heroAnimation: AlwaysStoppedAnimation(1),
             ),
             // This app uses a flightShuttleBuilder to specify the exact widget
             // to build while the hero transition is mid-flight.
             //
-            // It could either be specified here or in SongsTab.
+            // It could either be specified here or in CoachesTab.
             flightShuttleBuilder: (context, animation, flightDirection,
                 fromHeroContext, toHeroContext) {
-              return HeroAnimatingSongCard(
-                song: song,
+              return HeroAnimatingCoachCard(
+                coach: coach,
                 color: color,
                 heroAnimation: animation,
               );
@@ -71,8 +67,8 @@ class SongDetailTab extends StatelessWidget {
                     ),
                   );
                 }
-                // Just a bunch of boxes that simulates loading song choices.
-                return SongPlaceholderTile();
+                // Just a bunch of boxes that simulates loading coach choices.
+                return CoachPlaceholderTile();
               },
             ),
           ),
@@ -87,7 +83,7 @@ class SongDetailTab extends StatelessWidget {
 
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(song)),
+      appBar: AppBar(title: Text(coach)),
       body: _buildBody(),
     );
   }
@@ -95,8 +91,8 @@ class SongDetailTab extends StatelessWidget {
   Widget _buildIos(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text(song),
-        previousPageTitle: 'Songs',
+        middle: Text(coach),
+        previousPageTitle: 'Coaches',
       ),
       child: _buildBody(),
     );

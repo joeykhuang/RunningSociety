@@ -1,35 +1,31 @@
-// Copyright 2020 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'song_detail_tab.dart';
+import 'coach_detail_tab.dart';
 import 'utils.dart';
 import 'widgets.dart';
 
-class SongsTab extends StatefulWidget {
-  static const title = 'Songs';
+class CoachesTab extends StatefulWidget {
+  static const title = 'Coaches';
   static const androidIcon = Icon(Icons.music_note);
   static const iosIcon = Icon(CupertinoIcons.music_note);
 
-  const SongsTab({Key? key, this.androidDrawer}) : super(key: key);
+  const CoachesTab({Key? key, this.androidDrawer}) : super(key: key);
 
   final Widget? androidDrawer;
 
   @override
-  _SongsTabState createState() => _SongsTabState();
+  _CoachesTabState createState() => _CoachesTabState();
 }
 
-class _SongsTabState extends State<SongsTab> {
-  static const _itemsLength = 50;
+class _CoachesTabState extends State<CoachesTab> {
+  static const _itemsLength = 3;
 
   final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
 
   late List<MaterialColor> colors;
-  late List<String> songNames;
+  late List<String> coachNames;
 
   @override
   void initState() {
@@ -39,7 +35,7 @@ class _SongsTabState extends State<SongsTab> {
 
   void _setData() {
     colors = getRandomColors(_itemsLength);
-    songNames = getRandomNames(_itemsLength);
+    coachNames = getRandomNames(_itemsLength);
   }
 
   Future<void> _refreshData() {
@@ -64,15 +60,15 @@ class _SongsTabState extends State<SongsTab> {
       bottom: false,
       child: Hero(
         tag: index,
-        child: HeroAnimatingSongCard(
-          song: songNames[index],
+        child: HeroAnimatingCoachCard(
+          coach: coachNames[index],
           color: color,
           heroAnimation: AlwaysStoppedAnimation(0),
           onPressed: () => Navigator.of(context).push<void>(
             MaterialPageRoute(
-              builder: (context) => SongDetailTab(
+              builder: (context) => CoachDetailTab(
                 id: index,
-                song: songNames[index],
+                coach: coachNames[index],
                 color: color,
               ),
             ),
@@ -113,7 +109,7 @@ class _SongsTabState extends State<SongsTab> {
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(SongsTab.title),
+        title: Text(CoachesTab.title),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
