@@ -5,6 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 /// A simple widget that builds different things on different platforms.
 class PlatformWidget extends StatelessWidget {
@@ -35,8 +36,9 @@ class PlatformWidget extends StatelessWidget {
 ///
 /// This is an example of a custom widget that an app developer might create for
 /// use on both iOS and Android as part of their brand's unique design.
-class PressableCard extends StatefulWidget {
-  const PressableCard({
+
+class PressableColorCard extends StatefulWidget {
+  const PressableColorCard({
     this.onPressed,
     required this.color,
     required this.flattenAnimation,
@@ -44,15 +46,106 @@ class PressableCard extends StatefulWidget {
   });
 
   final VoidCallback? onPressed;
-  final Color color;
   final Animation<double> flattenAnimation;
   final Widget? child;
+  final Color color;
 
   @override
-  State<StatefulWidget> createState() => _PressableCardState();
+  State<StatefulWidget> createState() => _PressableColorCardState();
 }
 
-class _PressableCardState extends State<PressableCard>
+class PressableImageCard extends StatefulWidget {
+  const PressableImageCard({
+    this.onPressed,
+    required this.image,
+    required this.flattenAnimation,
+    this.child,
+  });
+
+  final VoidCallback? onPressed;
+  final Animation<double> flattenAnimation;
+  final Widget? child;
+  final AssetImage image;
+
+  @override
+  State<StatefulWidget> createState() => _PressableImageCardState();
+}
+
+class _PressableColorCardState extends State<PressableColorCard>
+    with SingleTickerProviderStateMixin {
+  bool pressed = false;
+  late final AnimationController controller;
+  late final Animation<double> elevationAnimation;
+
+  @override
+  void initState() {
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 40),
+    );
+    elevationAnimation =
+        controller.drive(CurveTween(curve: Curves.easeInOutCubic));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  double get flatten => 1 - widget.flattenAnimation.value;
+
+  @override
+  Widget build(context) {
+    return Listener(
+      onPointerDown: (details) {
+        if (widget.onPressed != null) {
+          controller.forward();
+        }
+      },
+      onPointerUp: (details) {
+        controller.reverse();
+      },
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          widget.onPressed?.call();
+        },
+        // This widget both internally drives an animation when pressed and
+        // responds to an external animation to flatten the card when in a
+        // hero animation. You likely want to modularize them more in your own
+        // app.
+        child: AnimatedBuilder(
+          animation:
+          Listenable.merge([elevationAnimation, widget.flattenAnimation]),
+          child: widget.child,
+          builder: (context, child) {
+            return Transform.scale(
+              // This is just a sample. You likely want to keep the math cleaner
+              // in your own app.
+              scale: 1 - elevationAnimation.value * 0.03,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16) *
+                    flatten,
+                child: PhysicalModel(
+                  elevation:
+                  ((1 - elevationAnimation.value) * 10 + 10) * flatten,
+                  borderRadius: BorderRadius.circular(12 * flatten),
+                  clipBehavior: Clip.antiAlias,
+                  color: widget.color,
+                  child: child,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _PressableImageCardState extends State<PressableImageCard>
     with SingleTickerProviderStateMixin {
   bool pressed = false;
   late final AnimationController controller;
@@ -110,15 +203,15 @@ class _PressableCardState extends State<PressableCard>
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16) *
                     flatten,
                 child: PhysicalModel(
-                  elevation:
-                      ((1 - elevationAnimation.value) * 10 + 10) * flatten,
-                  borderRadius: BorderRadius.circular(12 * flatten),
-                  clipBehavior: Clip.antiAlias,
-                  color: widget.color,
-                  child: child,
+                    elevation:
+                    ((1 - elevationAnimation.value) * 10 + 10) * flatten,
+                    borderRadius: BorderRadius.circular(12 * flatten),
+                    clipBehavior: Clip.antiAlias,
+                    color: Colors.transparent,
+                    child: child,
+                  ),
                 ),
-              ),
-            );
+              );
           },
         ),
       ),
@@ -136,17 +229,15 @@ class _PressableCardState extends State<PressableCard>
 class HeroAnimatingCoachCard extends StatelessWidget {
   HeroAnimatingCoachCard({
     required this.coach,
-    required this.color,
+    required this.image,
     required this.heroAnimation,
     this.onPressed,
   });
 
   final String coach;
-  final Color color;
+  final AssetImage image;
   final Animation<double> heroAnimation;
   final VoidCallback? onPressed;
-
-  double get playButtonSize => 50 + 50 * heroAnimation.value;
 
   @override
   Widget build(context) {
@@ -159,12 +250,12 @@ class HeroAnimatingCoachCard extends StatelessWidget {
     return AnimatedBuilder(
       animation: heroAnimation,
       builder: (context, child) {
-        return PressableCard(
+        return PressableImageCard(
           onPressed: heroAnimation.value == 0 ? onPressed : null,
-          color: color,
+          image: image,
           flattenAnimation: heroAnimation,
           child: SizedBox(
-            height: 250,
+            height: 310,
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -174,7 +265,7 @@ class HeroAnimatingCoachCard extends StatelessWidget {
                   left: 0,
                   right: 0,
                   child: Container(
-                    height: 80,
+                    height: 45,
                     color: Colors.black12,
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.symmetric(horizontal: 12),
@@ -191,18 +282,10 @@ class HeroAnimatingCoachCard extends StatelessWidget {
                 Padding(
                   padding:
                       EdgeInsets.only(bottom: 45) * (1 - heroAnimation.value),
-                  child: Container(
-                    height: playButtonSize,
-                    width: playButtonSize,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.black12,
-                    ),
-                    alignment: Alignment.center,
-                    child: Icon(Icons.play_arrow,
-                        size: playButtonSize, color: Colors.black38),
+                  child: Image(
+                      image: image,
+                    )
                   ),
-                ),
               ],
             ),
           ),
@@ -212,58 +295,44 @@ class HeroAnimatingCoachCard extends StatelessWidget {
   }
 }
 
-/// A loading coach tile's silhouette.
-///
-/// This is an example of a custom widget that an app developer might create for
-/// use on both iOS and Android as part of their brand's unique design.
-class CoachPlaceholderTile extends StatelessWidget {
+/// Coach available times
+class CoachAvailableClass extends StatelessWidget {
+  CoachAvailableClass({
+    required this.className,
+  });
+
+  final String className;
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 95,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-        child: Row(
+    return PressableColorCard(
+      color: Colors.transparent,
+      flattenAnimation: AlwaysStoppedAnimation(1),
+      child: SizedBox(
+        height: 50,
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            Container(
-              color: Theme.of(context).textTheme.bodyText2!.color,
-              width: 130,
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 12),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 9,
-                    margin: EdgeInsets.only(right: 60),
-                    color: Theme.of(context).textTheme.bodyText2!.color,
+            // The coach title banner slides off in the hero animation.
+            Positioned(
+              bottom: 5,
+              left: 20,
+              right: 20,
+              child: Container(
+                height: 40,
+                color: Colors.black12,
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Text(
+                  className,
+                  style: TextStyle(
+                    fontSize: 21,
+                    fontWeight: FontWeight.w500,
                   ),
-                  Container(
-                    height: 9,
-                    margin: EdgeInsets.only(right: 20, top: 8),
-                    color: Theme.of(context).textTheme.bodyText2!.color,
-                  ),
-                  Container(
-                    height: 9,
-                    margin: EdgeInsets.only(right: 40, top: 8),
-                    color: Theme.of(context).textTheme.bodyText2!.color,
-                  ),
-                  Container(
-                    height: 9,
-                    margin: EdgeInsets.only(right: 80, top: 8),
-                    color: Theme.of(context).textTheme.bodyText2!.color,
-                  ),
-                  Container(
-                    height: 9,
-                    margin: EdgeInsets.only(right: 50, top: 8),
-                    color: Theme.of(context).textTheme.bodyText2!.color,
-                  ),
-                ],
+                ),
               ),
             ),
+            // The play button grows in the hero animation.
           ],
         ),
       ),

@@ -20,40 +20,27 @@ class CoachesTab extends StatefulWidget {
 }
 
 class _CoachesTabState extends State<CoachesTab> {
-  static const _itemsLength = 3;
+  static const _itemsLength = 2;
 
   final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
 
-  late List<MaterialColor> colors;
-  late List<String> coachNames;
+  late List<AssetImage> coachImages = [AssetImage('assets/coaches_images/daniel.jpg'), AssetImage('assets/coaches_images/elvis.jpg')];
+  late List<String> coachNames = ['Daniel', 'Elvis'];
 
   @override
   void initState() {
-    _setData();
     super.initState();
-  }
-
-  void _setData() {
-    colors = getRandomColors(_itemsLength);
-    coachNames = getRandomNames(_itemsLength);
   }
 
   Future<void> _refreshData() {
     return Future.delayed(
       // This is just an arbitrary delay that simulates some network activity.
       const Duration(seconds: 2),
-      () => setState(() => _setData()),
     );
   }
 
   Widget _listBuilder(BuildContext context, int index) {
     if (index >= _itemsLength) return Container();
-
-    // Show a slightly different color palette. Show poppy-ier colors on iOS
-    // due to lighter contrasting bars and tone it down on Android.
-    final color = defaultTargetPlatform == TargetPlatform.iOS
-        ? colors[index]
-        : colors[index].shade400;
 
     return SafeArea(
       top: false,
@@ -62,14 +49,14 @@ class _CoachesTabState extends State<CoachesTab> {
         tag: index,
         child: HeroAnimatingCoachCard(
           coach: coachNames[index],
-          color: color,
+          image: coachImages[index],
           heroAnimation: AlwaysStoppedAnimation(0),
           onPressed: () => Navigator.of(context).push<void>(
             MaterialPageRoute(
               builder: (context) => CoachDetailTab(
                 id: index,
                 coach: coachNames[index],
-                color: color,
+                image: coachImages[index],
               ),
             ),
           ),

@@ -121,7 +121,7 @@ class PreferenceCard extends StatelessWidget {
 
   @override
   Widget build(context) {
-    return PressableCard(
+    return PressableColorCard(
       color: Colors.green,
       flattenAnimation: AlwaysStoppedAnimation(0),
       child: Stack(

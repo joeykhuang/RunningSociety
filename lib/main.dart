@@ -5,10 +5,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'coaches_tab.dart';
 import 'news_tab.dart';
 import 'profile_tab.dart';
 import 'settings_tab.dart';
-import 'coaches_tab.dart';
 import 'widgets.dart';
 
 void main() => runApp(MyAdaptingApp());

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'widgets.dart';
 
+final List<List<String>> coachClasses = [['Classes', 'Beginner Running', 'Intermediate Running', 'Advanced Running'], ['Classes', 'Road to 5k', 'Your First Half-Marathon', 'Beginning Marathon', 'Ticket to the Boston Marathon']];
 /// Page shown when a card in the coachs tab is tapped.
 ///
 /// On Android, this page sits at the top of your app. On iOS, this page is on
@@ -11,12 +12,12 @@ class CoachDetailTab extends StatelessWidget {
   const CoachDetailTab({
     required this.id,
     required this.coach,
-    required this.color,
+    required this.image,
   });
 
   final int id;
   final String coach;
-  final Color color;
+  final AssetImage image;
 
   Widget _buildBody() {
     return SafeArea(
@@ -30,7 +31,7 @@ class CoachDetailTab extends StatelessWidget {
             tag: id,
             child: HeroAnimatingCoachCard(
               coach: coach,
-              color: color,
+              image: image,
               heroAnimation: AlwaysStoppedAnimation(1),
             ),
             // This app uses a flightShuttleBuilder to specify the exact widget
@@ -41,7 +42,7 @@ class CoachDetailTab extends StatelessWidget {
                 fromHeroContext, toHeroContext) {
               return HeroAnimatingCoachCard(
                 coach: coach,
-                color: color,
+                image: image,
                 heroAnimation: animation,
               );
             },
@@ -52,14 +53,14 @@ class CoachDetailTab extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: coachClasses[id].length,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Padding(
                     padding:
-                        const EdgeInsets.only(left: 15, top: 16, bottom: 8),
+                    const EdgeInsets.only(left: 15, top: 16, bottom: 8),
                     child: Text(
-                      'You might also like:',
+                      'Classes Available:',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -68,7 +69,7 @@ class CoachDetailTab extends StatelessWidget {
                   );
                 }
                 // Just a bunch of boxes that simulates loading coach choices.
-                return CoachPlaceholderTile();
+                return CoachAvailableClass(className: coachClasses[id][index]);
               },
             ),
           ),
