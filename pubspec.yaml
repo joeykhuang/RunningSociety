@@ -1,0 +1,10 @@
+name: running_society
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^0.1.2
+  health: ^3.0.4
