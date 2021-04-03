@@ -3,12 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'coach_detail_tab.dart';
+import 'variables.dart';
 import 'widgets.dart';
 
 class CoachesTab extends StatefulWidget {
   static const title = 'Coaches';
   static const androidIcon = Icon(Icons.music_note);
-  static const iosIcon = Icon(CupertinoIcons.music_note);
+  static const iosIcon = Icon(CupertinoIcons.person_3_fill);
 
   const CoachesTab({Key? key, this.androidDrawer}) : super(key: key);
 
@@ -22,9 +23,6 @@ class _CoachesTabState extends State<CoachesTab> {
   static const _itemsLength = 2;
 
   final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
-
-  late List<AssetImage> coachImages = [AssetImage('assets/coaches_images/daniel.jpg'), AssetImage('assets/coaches_images/elvis.jpg')];
-  late List<String> coachNames = ['Daniel', 'Elvis'];
 
   @override
   void initState() {

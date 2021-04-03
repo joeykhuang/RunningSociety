@@ -291,51 +291,6 @@ class HeroAnimatingCoachCard extends StatelessWidget {
   }
 }
 
-/// Coach available times
-class CoachAvailableClass extends StatelessWidget {
-  CoachAvailableClass({
-    required this.className,
-  });
-
-  final String className;
-
-  @override
-  Widget build(BuildContext context) {
-    return PressableColorCard(
-      color: Colors.transparent,
-      flattenAnimation: AlwaysStoppedAnimation(1),
-      child: SizedBox(
-        height: 50,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // The coach title banner slides off in the hero animation.
-            Positioned(
-              bottom: 5,
-              left: 20,
-              right: 20,
-              child: Container(
-                height: 40,
-                color: Colors.black12,
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                child: Text(
-                  className,
-                  style: TextStyle(
-                    fontSize: 21,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-            // The play button grows in the hero animation.
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 // ===========================================================================
 // Non-shared code below because different interfaces are shown to prompt
 // for a multiple-choice answer.
