@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'coach_detail_tab.dart';
-import 'utils.dart';
 import 'widgets.dart';
 
 class CoachesTab extends StatefulWidget {

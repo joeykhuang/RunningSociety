@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'coaches_tab.dart';
+import 'home.dart';
 import 'news_tab.dart';
 import 'profile_tab.dart';
 import 'settings_tab.dart';
@@ -84,6 +85,10 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
       tabBar: CupertinoTabBar(
         items: [
           BottomNavigationBarItem(
+              label: HomeTab.title,
+              icon: HomeTab.iosIcon,
+          ),
+          BottomNavigationBarItem(
             label: CoachesTab.title,
             icon: CoachesTab.iosIcon,
           ),
@@ -101,15 +106,20 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
         switch (index) {
           case 0:
             return CupertinoTabView(
+              defaultTitle: HomeTab.title,
+              builder: (context) => HomeTab(),
+            );
+          case 1:
+            return CupertinoTabView(
               defaultTitle: CoachesTab.title,
               builder: (context) => CoachesTab(key: TabKey),
             );
-          case 1:
+          case 2:
             return CupertinoTabView(
               defaultTitle: NewsTab.title,
               builder: (context) => NewsTab(),
             );
-          case 2:
+          case 3:
             return CupertinoTabView(
               defaultTitle: ProfileTab.title,
               builder: (context) => ProfileTab(),
