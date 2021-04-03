@@ -1,11 +1,11 @@
 {
-    "name": "running_society",
-    "short_name": "running_society",
+    "name": "platform_design",
+    "short_name": "platform_design",
     "start_url": ".",
-    "display": "standalone",
+    "display": "minimal-ui",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A project showcasing a Flutter app following different platform IA conventions.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

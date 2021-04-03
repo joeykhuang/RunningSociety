@@ -1,160 +1,195 @@
+// Copyright 2020 The Flutter team. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:health/health.dart';
-import 'dart:async';
 
-void main() => runApp(MyApp());
+import 'news_tab.dart';
+import 'profile_tab.dart';
+import 'settings_tab.dart';
+import 'songs_tab.dart';
+import 'widgets.dart';
 
-class MyApp extends StatefulWidget {
+void main() => runApp(MyAdaptingApp());
+
+class MyAdaptingApp extends StatelessWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  Widget build(context) {
+    // Either Material or Cupertino widgets work in either Material or Cupertino
+    // Apps.
+    return MaterialApp(
+      title: 'Adaptive Music App',
+      theme: ThemeData(
+        // Use the green theme for Material widgets.
+        primarySwatch: Colors.green,
+      ),
+      darkTheme: ThemeData.dark(),
+      builder: (context, child) {
+        return CupertinoTheme(
+          // Instead of letting Cupertino widgets auto-adapt to the Material
+          // theme (which is green), this app will use a different theme
+          // for Cupertino (which is blue by default).
+          data: CupertinoThemeData(),
+          child: Material(child: child),
+        );
+      },
+      home: PlatformAdaptingHomePage(),
+    );
+  }
 }
 
-enum AppState {
-  DATA_NOT_FETCHED,
-  FETCHING_DATA,
-  DATA_READY,
-  NO_DATA,
-  AUTH_NOT_GRANTED
+// Shows a different type of scaffold depending on the platform.
+//
+// This file has the most amount of non-sharable code since it behaves the most
+// differently between the platforms.
+//
+// These differences are also subjective and have more than one 'right' answer
+// depending on the app and content.
+class PlatformAdaptingHomePage extends StatefulWidget {
+  @override
+  _PlatformAdaptingHomePageState createState() =>
+      _PlatformAdaptingHomePageState();
 }
 
-class _MyAppState extends State<MyApp> {
-  List<HealthDataPoint> _healthDataList = [];
-  AppState _state = AppState.DATA_NOT_FETCHED;
+class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
+  // This app keeps a global key for the songs tab because it owns a bunch of
+  // data. Since changing platform re-parents those tabs into different
+  // scaffolds, keeping a global key to it lets this app keep that tab's data as
+  // the platform toggles.
+  //
+  // This isn't needed for apps that doesn't toggle platforms while running.
+  final songsTabKey = GlobalKey();
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future<void> fetchData() async {
-    /// Get everything from midnight until now
-    DateTime startDate = DateTime(2020, 11, 07, 0, 0, 0);
-    DateTime endDate = DateTime(2020, 11, 07, 23, 59, 59);
-
-    HealthFactory health = HealthFactory();
-
-    /// Define the types to get.
-    List<HealthDataType> types = [
-      HealthDataType.STEPS,
-      HealthDataType.WEIGHT,
-      HealthDataType.HEIGHT,
-      HealthDataType.BLOOD_GLUCOSE,
-      HealthDataType.DISTANCE_WALKING_RUNNING,
-    ];
-
-    setState(() => _state = AppState.FETCHING_DATA);
-
-    /// You MUST request access to the data types before reading them
-    bool accessWasGranted = await health.requestAuthorization(types);
-
-    int steps = 0;
-
-    if (accessWasGranted) {
-      try {
-        /// Fetch new data
-        List<HealthDataPoint> healthData =
-            await health.getHealthDataFromTypes(startDate, endDate, types);
-
-        /// Save all the new data points
-        _healthDataList.addAll(healthData);
-      } catch (e) {
-        print("Caught exception in getHealthDataFromTypes: $e");
-      }
-
-      /// Filter out duplicates
-      _healthDataList = HealthFactory.removeDuplicates(_healthDataList);
-
-      /// Print the results
-      _healthDataList.forEach((x) {
-        print("Data point: $x");
-        steps += (x.value as int);
-      });
-
-      print("Steps: $steps");
-
-      /// Update the UI to display the results
-      setState(() {
-        _state =
-            _healthDataList.isEmpty ? AppState.NO_DATA : AppState.DATA_READY;
-      });
-    } else {
-      print("Authorization not granted");
-      setState(() => _state = AppState.DATA_NOT_FETCHED);
-    }
-  }
-
-  Widget _contentFetchingData() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-            padding: EdgeInsets.all(20),
-            child: CircularProgressIndicator(
-              strokeWidth: 10,
-            )),
-        Text('Fetching data...')
-      ],
+  // In Material, this app uses the hamburger menu paradigm and flatly lists
+  // all 4 possible tabs. This drawer is injected into the songs tab which is
+  // actually building the scaffold around the drawer.
+  Widget _buildAndroidHomePage(BuildContext context) {
+    return SongsTab(
+      key: songsTabKey,
+      androidDrawer: _AndroidDrawer(),
     );
   }
 
-  Widget _contentDataReady() {
-    return ListView.builder(
-        itemCount: _healthDataList.length,
-        itemBuilder: (_, index) {
-          HealthDataPoint p = _healthDataList[index];
-          return ListTile(
-            title: Text("${p.typeString}: ${p.value}"),
-            trailing: Text('${p.unitString}'),
-            subtitle: Text('${p.dateFrom} - ${p.dateTo}'),
-          );
-        });
-  }
-
-  Widget _contentNoData() {
-    return Text('No Data to show');
-  }
-
-  Widget _contentNotFetched() {
-    return Text('Press the download button to fetch data');
-  }
-
-  Widget _authorizationNotGranted() {
-    return Text('''Authorization not given.
-        For Android please check your OAUTH2 client ID is correct in Google Developer Console.
-         For iOS check your permissions in Apple Health.''');
-  }
-
-  Widget _content() {
-    if (_state == AppState.DATA_READY)
-      return _contentDataReady();
-    else if (_state == AppState.NO_DATA)
-      return _contentNoData();
-    else if (_state == AppState.FETCHING_DATA)
-      return _contentFetchingData();
-    else if (_state == AppState.AUTH_NOT_GRANTED)
-      return _authorizationNotGranted();
-
-    return _contentNotFetched();
+  // On iOS, the app uses a bottom tab paradigm. Here, each tab view sits inside
+  // a tab in the tab scaffold. The tab scaffold also positions the tab bar
+  // in a row at the bottom.
+  //
+  // An important thing to note is that while a Material Drawer can display a
+  // large number of items, a tab bar cannot. To illustrate one way of adjusting
+  // for this, the app folds its fourth tab (the settings page) into the
+  // third tab. This is a common pattern on iOS.
+  Widget _buildIosHomePage(BuildContext context) {
+    return CupertinoTabScaffold(
+      tabBar: CupertinoTabBar(
+        items: [
+          BottomNavigationBarItem(
+            label: SongsTab.title,
+            icon: SongsTab.iosIcon,
+          ),
+          BottomNavigationBarItem(
+            label: NewsTab.title,
+            icon: NewsTab.iosIcon,
+          ),
+          BottomNavigationBarItem(
+            label: ProfileTab.title,
+            icon: ProfileTab.iosIcon,
+          ),
+        ],
+      ),
+      tabBuilder: (context, index) {
+        switch (index) {
+          case 0:
+            return CupertinoTabView(
+              defaultTitle: SongsTab.title,
+              builder: (context) => SongsTab(key: songsTabKey),
+            );
+          case 1:
+            return CupertinoTabView(
+              defaultTitle: NewsTab.title,
+              builder: (context) => NewsTab(),
+            );
+          case 2:
+            return CupertinoTabView(
+              defaultTitle: ProfileTab.title,
+              builder: (context) => ProfileTab(),
+            );
+          default:
+            assert(false, 'Unexpected tab');
+            return SizedBox.shrink();
+        }
+      },
+    );
   }
 
   @override
+  Widget build(context) {
+    return PlatformWidget(
+      androidBuilder: _buildAndroidHomePage,
+      iosBuilder: _buildIosHomePage,
+    );
+  }
+}
+
+class _AndroidDrawer extends StatelessWidget {
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Plugin example app'),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.file_download),
-                onPressed: () {
-                  fetchData();
-                },
-              )
-            ],
+    return Drawer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(color: Colors.green),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Icon(
+                Icons.account_circle,
+                color: Colors.green.shade800,
+                size: 96,
+              ),
+            ),
           ),
-          body: Center(
-            child: _content(),
-          )),
+          ListTile(
+            leading: SongsTab.androidIcon,
+            title: Text(SongsTab.title),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: NewsTab.androidIcon,
+            title: Text(NewsTab.title),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push<void>(
+                  context, MaterialPageRoute(builder: (context) => NewsTab()));
+            },
+          ),
+          ListTile(
+            leading: ProfileTab.androidIcon,
+            title: Text(ProfileTab.title),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push<void>(context,
+                  MaterialPageRoute(builder: (context) => ProfileTab()));
+            },
+          ),
+          // Long drawer contents are often segmented.
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Divider(),
+          ),
+          ListTile(
+            leading: SettingsTab.androidIcon,
+            title: Text(SettingsTab.title),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push<void>(context,
+                  MaterialPageRoute(builder: (context) => SettingsTab()));
+            },
+          ),
+        ],
+      ),
     );
   }
 }
