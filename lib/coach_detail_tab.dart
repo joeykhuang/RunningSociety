@@ -106,10 +106,7 @@ class ScheduleButton extends StatelessWidget {
                   child: const Text('Schedule'),
                   onPressed: () => Navigator.of(context).push<void>(
                     MaterialPageRoute(
-                      builder: (context) => ScheduleTab(
-                        coachName: coachName,
-                        coachClass: buttonText,
-                      ),
+                      builder: (context) => ScheduleTab(),
                     ),
                   ),
                 ),
