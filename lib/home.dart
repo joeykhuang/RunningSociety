@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'voice_call/pages/index.dart';
 import 'widgets.dart';
 
 
@@ -83,7 +84,11 @@ class CallButton extends StatelessWidget {
               actions: [
                 TextButton(
                   child: const Text('Got it'),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.of(context).push<void>(
+                    MaterialPageRoute(
+                      builder: (context) => IndexPage(),
+                    ),
+                  ),
                 ),
                 TextButton(
                   child: const Text('Cancel'),
@@ -118,7 +123,11 @@ class CallButton extends StatelessWidget {
                 ),
                 CupertinoActionSheetAction(
                   child: const Text('Got it'),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.of(context).push<void>(
+                    MaterialPageRoute(
+                      builder: (context) => IndexPage(),
+                    ),
+                  ),
                 ),
               ],
               cancelButton: CupertinoActionSheetAction(

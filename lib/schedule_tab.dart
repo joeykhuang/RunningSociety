@@ -7,12 +7,13 @@ import 'calendar_utils/utils.dart';
 import 'variables.dart';
 import 'widgets.dart';
 
+
 final kEvents = LinkedHashMap<DateTime, List<Event>>(
   equals: isSameDay,
   hashCode: getHashCode,
 )..addAll(_kEventSource);
 
-final _kEventSource = { for (var item in List.generate(50, (index) => index))
+final _kEventSource = {for (var item in List.generate(50, (index) => index))
   DateTime.utc(2021, 4, item) : List.generate(item % 2 + 1, (index) =>
       Event('${rng.nextInt(10) + 10}:00')) }
   ..addAll({});
@@ -99,36 +100,39 @@ class _SchedulePageState extends State<ScheduleTab>
       body: Column(
         children: [
           Padding(padding: const EdgeInsets.only(top: 100)),
-          TableCalendar<Event>(
-            firstDay: kFirstDay,
-            lastDay: kLastDay,
-            focusedDay: _focusedDay,
-            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-            rangeStartDay: _rangeStart,
-            rangeEndDay: _rangeEnd,
-            calendarFormat: _calendarFormat,
-            rangeSelectionMode: _rangeSelectionMode,
-            eventLoader: _getEventsForDay,
-            startingDayOfWeek: StartingDayOfWeek.monday,
-            calendarStyle: CalendarStyle(
-              markerSizeScale: 0.15,
-              markerDecoration: ShapeDecoration(
-                color: Colors.blueGrey, shape: CircleBorder(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TableCalendar<Event>(
+              firstDay: kFirstDay,
+              lastDay: kLastDay,
+              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              rangeStartDay: _rangeStart,
+              rangeEndDay: _rangeEnd,
+              calendarFormat: _calendarFormat,
+              rangeSelectionMode: _rangeSelectionMode,
+              eventLoader: _getEventsForDay,
+              startingDayOfWeek: StartingDayOfWeek.monday,
+              calendarStyle: CalendarStyle(
+                markerSizeScale: 0.15,
+                markerDecoration: ShapeDecoration(
+                  color: Colors.blueGrey, shape: CircleBorder(),
+                ),
+                outsideDaysVisible: false,
               ),
-              outsideDaysVisible: false,
+              onDaySelected: _onDaySelected,
+              onRangeSelected: _onRangeSelected,
+              onFormatChanged: (format) {
+                if (_calendarFormat != format) {
+                  setState(() {
+                    _calendarFormat = format;
+                  });
+                }
+              },
+              onPageChanged: (focusedDay) {
+                _focusedDay = focusedDay;
+              },
             ),
-            onDaySelected: _onDaySelected,
-            onRangeSelected: _onRangeSelected,
-            onFormatChanged: (format) {
-              if (_calendarFormat != format) {
-                setState(() {
-                  _calendarFormat = format;
-                });
-              }
-            },
-            onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
-            },
           ),
           const SizedBox(height: 8.0),
           Expanded(

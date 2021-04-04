@@ -16,6 +16,9 @@ dependencies:
   convex_bottom_bar: ^3.0.0
   font_awesome_flutter: ^9.0.0
   table_calendar: ^3.0.0-nullsafety.1
+  agora_rtc_engine: ^4.0.0-rc.3
+  permission_handler: ^6.1.1
+
 
 dev_dependencies:
   flutter_test:
