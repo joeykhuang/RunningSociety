@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:running_society/login/pages/login_page.dart';
 import 'package:running_society/login/widgets/snackbar.dart';
+import 'package:running_society/supabase/config.dart';
 import 'package:running_society/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -302,8 +305,26 @@ class _SignUpState extends State<SignUp> {
         ));
   }
 
-  void _toggleSignUpButton() {
-    CustomSnackBar(context, const Text('SignUp button pressed'));
+  Future<void> _toggleSignUpButton() async {
+    final response = await gotrueClient.signUp(signupEmailController.text, signupPasswordController.text);
+    if (response.error != null) {
+      CustomSnackBar(context, Text('Sign Up Failed'));
+      signupPasswordController.clear();
+      signupConfirmPasswordController.clear();
+    } else if (response.data == null && response.user == null) {
+      CustomSnackBar(context, Text('Email Verification Required'));
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString(PERSIST_SESSION_KEY, response.data!.persistSessionString);
+      final title = 'Welcome ${response.data!.user!.email}';
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (context) {
+            return LoginPage();
+          },
+        ),
+      );
+    }
   }
 
   void _toggleSignup() {

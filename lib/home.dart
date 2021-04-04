@@ -1,5 +1,7 @@
+import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:running_society/voice_call/pages/call.dart';
 
 import 'voice_call/pages/index.dart';
 import 'widgets.dart';
@@ -12,17 +14,34 @@ class HomeTab extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(),
-            ),
-            CallButton(),
-          ],
-        ),
-      ),
+      child: Stack(
+        children: <Widget>[
+          Container(
+            child: Image(
+              image: AssetImage('assets/img/Home.png'),
+            )
+          ),
+          Align(
+            alignment: Alignment(-.5, 0.05),
+            child: SizedBox(
+              width: 280,
+              height: 120,
+              child: CupertinoButton(
+                onPressed: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute(
+                    builder: (context) => CallPage(
+                      channelName: 'runningChat',
+                      role: ClientRole.Audience,
+                    ),
+                  ),
+                ),
+                child: Text(''),
+                color: Colors.transparent,
+              ),
+            )
+          )
+        ]
+      )
     );
   }
 
@@ -41,18 +60,12 @@ class HomeTab extends StatelessWidget {
   }
 
   Widget _buildIos(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(),
-      child: _buildBody(context),
-    );
+    return _buildBody(context);
   }
 
   @override
-  Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos,
-    );
+  Widget build(BuildContext context) {
+    return _buildBody(context);
   }
 }
 
@@ -106,41 +119,9 @@ class CallButton extends StatelessWidget {
     return CupertinoButton(
       color: CupertinoColors.destructiveRed,
       child: Text('Call'),
-      onPressed: () {
-        // You should do something with the result of the action sheet prompt
-        // in a real app but this is just a demo.
-        showCupertinoModalPopup<void>(
-          context: context,
-          builder: (context) {
-            return CupertinoActionSheet(
-              title: Text('Call?'),
-              message: _logoutMessage,
-              actions: [
-                CupertinoActionSheetAction(
-                  child: const Text('Quit'),
-                  isDestructiveAction: true,
-                  onPressed: () => Navigator.pop(context),
-                ),
-                CupertinoActionSheetAction(
-                  child: const Text('Got it'),
-                  onPressed: () => Navigator.of(context).push<void>(
-                    MaterialPageRoute(
-                      builder: (context) => IndexPage(),
-                    ),
-                  ),
-                ),
-              ],
-              cancelButton: CupertinoActionSheetAction(
-                child: const Text('Cancel'),
-                isDefaultAction: true,
-                onPressed: () => Navigator.pop(context),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+      onPressed: () => Navigator.pop(context),
+      );
+    }
 
   @override
   Widget build(context) {

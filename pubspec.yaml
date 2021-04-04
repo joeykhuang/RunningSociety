@@ -18,6 +18,10 @@ dependencies:
   table_calendar: ^3.0.0-nullsafety.1
   agora_rtc_engine: ^4.0.0-rc.3
   permission_handler: ^6.1.1
+  gotrue: ^0.0.1-dev.9
+  shared_preferences: ^2.0.5
+  rounded_loading_button: ^1.0.18
+  url_launcher: ^6.0.3
 
 
 dev_dependencies:

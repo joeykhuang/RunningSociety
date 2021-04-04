@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:running_society/theme.dart';
-import 'package:running_society/login/widgets/snackbar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:running_society/supabase/config.dart';
+import 'package:running_society/theme.dart';
+import 'package:running_society/user_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../widgets/snackbar.dart';
 import 'sign_up.dart';
 
 class LoginPage extends StatefulWidget {
@@ -154,7 +157,7 @@ class _LoginPageState extends State<LoginPage>
                                 ),
                               ),
                               onSubmitted: (_) {
-                                _toggleSignInButton();
+                                _toggleSignInButton(context);
                               },
                               textInputAction: TextInputAction.go,
                             ),
@@ -203,8 +206,9 @@ class _LoginPageState extends State<LoginPage>
                               fontFamily: 'WorkSansBold'),
                         ),
                       ),
-                      onPressed: () => CustomSnackBar(
-                          context, const Text('Login button pressed')),
+                      onPressed: (){
+                        _toggleSignInButton(context);
+                      }
                     ),
                   )
                 ],
@@ -246,8 +250,25 @@ class _LoginPageState extends State<LoginPage>
     ));
   }
 
-  void _toggleSignInButton() {
-    CustomSnackBar(context, const Text('Login button pressed'));
+  void _toggleSignInButton(BuildContext context) async {
+    // CustomSnackBar(context, Text(email));
+    final response = await gotrueClient.signIn(email: loginEmailController.text,
+        password: loginPasswordController.text);
+    if (response.error != null) {
+      CustomSnackBar(context, Text('Sign in Failed'));
+      loginEmailController.clear();
+    } else {
+      var prefs = await SharedPreferences.getInstance();
+      await prefs.setString(PERSIST_SESSION_KEY, response.data!.persistSessionString);
+
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (context) {
+            return UserTab();
+          },
+        ),
+      );
+    }
   }
 
   void _toggleLogin() {

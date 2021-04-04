@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -8,7 +9,7 @@ import 'call.dart';
 
 class IndexPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => IndexState();
+  IndexState createState() => IndexState();
 }
 
 class IndexState extends State<IndexPage> {
@@ -29,11 +30,11 @@ class IndexState extends State<IndexPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Agora Flutter QuickStart'),
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        previousPageTitle: 'Home',
       ),
-      body: Center(
+      child: Center(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           height: 400,
@@ -58,7 +59,7 @@ class IndexState extends State<IndexPage> {
               Column(
                 children: [
                   ListTile(
-                    title: Text(ClientRole.Broadcaster.toString()),
+                    title: Text('Coach'),
                     leading: Radio(
                       value: ClientRole.Broadcaster,
                       groupValue: _role,
@@ -70,7 +71,7 @@ class IndexState extends State<IndexPage> {
                     ),
                   ),
                   ListTile(
-                    title: Text(ClientRole.Audience.toString()),
+                    title: Text('Learner'),
                     leading: Radio(
                       value: ClientRole.Audience,
                       groupValue: _role,
