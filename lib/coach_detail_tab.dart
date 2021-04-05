@@ -132,11 +132,8 @@ class ScheduleButton extends StatelessWidget {
   }
 }
 
-/// Page shown when a card in the coachs tab is tapped.
-///
-/// On Android, this page sits at the top of your app. On iOS, this page is on
-/// top of the coachs tab's content but is below the tab bar itself.
-class CoachDetailTab extends StatelessWidget {
+
+class CoachDetailTab extends StatefulWidget {
   const CoachDetailTab({
     required this.id,
     required this.coach,
@@ -147,6 +144,26 @@ class CoachDetailTab extends StatelessWidget {
   final String coach;
   final AssetImage image;
 
+  @override
+  _CoachDetailTabState createState() => _CoachDetailTabState();
+}
+
+class _CoachDetailTabState extends State<CoachDetailTab> {
+  List<String> classes = <String>[''];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> _refreshData() async {
+    classes = <String>[''];
+    var coachClassesRaw = await getCoachClasses(widget.coach);
+    for (dynamic coachClassesElem in coachClassesRaw) {
+      classes.add(coachClassesElem['class_name']! as String);
+    }
+  }
+
   Widget _buildBody() {
     return SafeArea(
       bottom: false,
@@ -156,10 +173,10 @@ class CoachDetailTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Hero(
-            tag: id,
+            tag: widget.id,
             child: HeroAnimatingCoachCard(
-              coach: coach,
-              image: image,
+              coach: widget.coach,
+              image: widget.image,
               heroAnimation: AlwaysStoppedAnimation(1),
             ),
             // This app uses a flightShuttleBuilder to specify the exact widget
@@ -169,8 +186,8 @@ class CoachDetailTab extends StatelessWidget {
             flightShuttleBuilder: (context, animation, flightDirection,
                 fromHeroContext, toHeroContext) {
               return HeroAnimatingCoachCard(
-                coach: coach,
-                image: image,
+                coach: widget.coach,
+                image: widget.image,
                 heroAnimation: animation,
               );
             },
@@ -181,7 +198,7 @@ class CoachDetailTab extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: coachClasses[id].length,
+              itemCount: classes.length,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Padding(
@@ -198,8 +215,8 @@ class CoachDetailTab extends StatelessWidget {
                 }
                 // Just a bunch of boxes that simulates loading coach choices.
                 return CoachAvailableClass(
-                  coachName: coachNames[id],
-                  className: coachClasses[id][index]
+                  coachName: widget.coach,
+                  className: classes[index],
                 );
               },
             ),
@@ -209,32 +226,39 @@ class CoachDetailTab extends StatelessWidget {
     );
   }
 
+  Widget _listBuilder(BuildContext context, int index) {
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: Container(),
+    );
+  }
+
   // ===========================================================================
   // Non-shared code below because we're using different scaffolds.
   // ===========================================================================
 
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(coach)),
+      appBar: AppBar(title: Text(widget.coach)),
       body: _buildBody(),
     );
   }
 
-  Widget _buildIos(BuildContext context) {
+  Widget _buildIos(BuildContext context, AsyncSnapshot<void> snapshot) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text(coach),
+        middle: Text(widget.coach),
         previousPageTitle: 'Coaches',
       ),
-      child: _buildBody(),
+      child: _buildBody()
     );
   }
 
   @override
   Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos,
-    );
+    return FutureBuilder<void>(
+      future: _refreshData(),
+      builder: _buildIos);
   }
 }
