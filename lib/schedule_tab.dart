@@ -1,25 +1,22 @@
 import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:running_society/coach_detail_tab.dart';
+import 'package:running_society/coaches_tab.dart';
+import 'package:running_society/home.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'calendar_utils/utils.dart';
+import 'main.dart';
 import 'variables.dart';
 import 'widgets.dart';
 
-
-final kEvents = LinkedHashMap<DateTime, List<Event>>(
-  equals: isSameDay,
-  hashCode: getHashCode,
-)..addAll(_kEventSource);
-
-final _kEventSource = {for (var item in List.generate(50, (index) => index))
-  DateTime.utc(2021, 4, item) : List.generate(item % 2 + 1, (index) =>
-      Event('${rng.nextInt(10) + 10}:00')) }
-  ..addAll({});
-
 class ScheduleTab extends StatefulWidget {
-  const ScheduleTab({Key? key}) : super(key: key);
+
+  const ScheduleTab({Key? key,
+    required this.className}) : super(key: key);
+
+  final String className;
 
   @override
   _SchedulePageState createState() => _SchedulePageState();
@@ -35,9 +32,16 @@ class _SchedulePageState extends State<ScheduleTab>
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
 
+  LinkedHashMap<DateTime, List<Event>> kEvents = LinkedHashMap<DateTime, List<Event>>(
+    equals: isSameDay,
+    hashCode: getHashCode,
+  );
+
+
   @override
   void initState() {
     super.initState();
+    kEvents.addAll({DateTime.utc(2021, 4, 5): classSchedule[widget.className]!});
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }
@@ -152,7 +156,29 @@ class _SchedulePageState extends State<ScheduleTab>
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: ListTile(
-                        onTap: () => print('${value[index]}'),
+                        onTap: () {
+                          // You should do something with the result of the action sheet prompt
+                          // in a real app but this is just a demo.
+                          showCupertinoModalPopup<void>(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoActionSheet(
+                                title: Text('${value[index]}'),
+                                actions: [
+                                  CupertinoActionSheetAction(
+                                    child: const Text('Schedule'),
+                                    onPressed: () => Navigator.of(context).pop(),
+                                  ),
+                                ],
+                                cancelButton: CupertinoActionSheetAction(
+                                  child: const Text('Cancel'),
+                                  isDefaultAction: true,
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                              );
+                            },
+                          );
+                        },
                         title: Text('${value[index]}'),
                       ),
                     );
@@ -191,7 +217,6 @@ class _SchedulePageState extends State<ScheduleTab>
   Widget build(context) {
     return PlatformWidget(
       androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos,
-    );
+      iosBuilder: _buildIos);
   }
 }

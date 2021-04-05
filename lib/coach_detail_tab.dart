@@ -37,7 +37,7 @@ class CoachAvailableClass extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 12),
                 child: ScheduleButton(
                   coachName: coachName,
-                  buttonText: className,
+                  className: className,
                 ),
               ),
             ),
@@ -52,15 +52,15 @@ class CoachAvailableClass extends StatelessWidget {
 class ScheduleButton extends StatelessWidget {
   ScheduleButton({
     required this.coachName,
-    required this.buttonText,
+    required this.className,
   });
 
   final String coachName;
-  final String buttonText;
+  final String className;
 
   Widget _buildAndroid(BuildContext context) {
     return ElevatedButton(
-      child: Text(buttonText, style: TextStyle(color: Colors.black45)),
+      child: Text(className, style: TextStyle(color: Colors.black45)),
       onPressed: () {
         // You should do something with the result of the dialog prompt in a
         // real app but this is just a demo.
@@ -68,7 +68,7 @@ class ScheduleButton extends StatelessWidget {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text(buttonText),
+              title: Text(className),
               actions: [
                 TextButton(
                   child: const Text('Schedule'),
@@ -90,36 +90,14 @@ class ScheduleButton extends StatelessWidget {
     return CupertinoButton(
       color: Colors.transparent,
       child: Text(
-        buttonText,
+        className,
         style: TextStyle(color: Colors.black45),
       ),
-      onPressed: () {
-        // You should do something with the result of the action sheet prompt
-        // in a real app but this is just a demo.
-        showCupertinoModalPopup<void>(
-          context: context,
-          builder: (context) {
-            return CupertinoActionSheet(
-              title: Text(buttonText),
-              actions: [
-                CupertinoActionSheetAction(
-                  child: const Text('Schedule'),
-                  onPressed: () => Navigator.of(context).push<void>(
-                    MaterialPageRoute(
-                      builder: (context) => ScheduleTab(),
-                    ),
-                  ),
-                ),
-              ],
-              cancelButton: CupertinoActionSheetAction(
-                child: const Text('Cancel'),
-                isDefaultAction: true,
-                onPressed: () => Navigator.pop(context),
-              ),
-            );
-          },
-        );
-      },
+      onPressed: () => Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (context) => ScheduleTab(className: className),
+        ),
+      ),
     );
   }
 
@@ -131,7 +109,6 @@ class ScheduleButton extends StatelessWidget {
     );
   }
 }
-
 
 class CoachDetailTab extends StatefulWidget {
   const CoachDetailTab({
@@ -149,22 +126,14 @@ class CoachDetailTab extends StatefulWidget {
 }
 
 class _CoachDetailTabState extends State<CoachDetailTab> {
-  List<String> classes = <String>[''];
 
   @override
   void initState() {
     super.initState();
   }
 
-  Future<void> _refreshData() async {
-    classes = <String>[''];
-    var coachClassesRaw = await getCoachClasses(widget.coach);
-    for (dynamic coachClassesElem in coachClassesRaw) {
-      classes.add(coachClassesElem['class_name']! as String);
-    }
-  }
-
   Widget _buildBody() {
+    var coachClasses = classes[widget.coach]!;
     return SafeArea(
       bottom: false,
       left: false,
@@ -198,7 +167,7 @@ class _CoachDetailTabState extends State<CoachDetailTab> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: classes.length,
+              itemCount: coachClasses.length,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Padding(
@@ -216,7 +185,7 @@ class _CoachDetailTabState extends State<CoachDetailTab> {
                 // Just a bunch of boxes that simulates loading coach choices.
                 return CoachAvailableClass(
                   coachName: widget.coach,
-                  className: classes[index],
+                  className: coachClasses[index],
                 );
               },
             ),
@@ -245,7 +214,7 @@ class _CoachDetailTabState extends State<CoachDetailTab> {
     );
   }
 
-  Widget _buildIos(BuildContext context, AsyncSnapshot<void> snapshot) {
+  Widget _buildIos(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.coach),
@@ -257,8 +226,8 @@ class _CoachDetailTabState extends State<CoachDetailTab> {
 
   @override
   Widget build(context) {
-    return FutureBuilder<void>(
-      future: _refreshData(),
-      builder: _buildIos);
+    return PlatformWidget(
+      androidBuilder: _buildAndroid,
+      iosBuilder: _buildIos);
   }
 }

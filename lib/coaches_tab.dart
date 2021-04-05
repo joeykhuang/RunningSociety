@@ -22,23 +22,14 @@ class CoachesTab extends StatefulWidget {
 class _CoachesTabState extends State<CoachesTab> {
   final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
 
-  var coaches = <String>[];
-
   @override
   void initState() {
     super.initState();
   }
 
-  Future<void> _refreshData() async {
-    coaches = <String>[];
-    var coachNamesRaw = await getCoachNames();
-    for (dynamic coachNameElem in coachNamesRaw) {
-      coaches.add(coachNameElem['coach_name']! as String);
-    }
-  }
-
   Widget _listBuilder(BuildContext context, int index) {
     if (index >= coaches.length) return Container();
+    if (coaches.isEmpty) return Container();
     return SafeArea(
       top: false,
       bottom: false,
@@ -109,7 +100,7 @@ class _CoachesTabState extends State<CoachesTab> {
       drawer: widget.androidDrawer,
       body: RefreshIndicator(
         key: _androidRefreshKey,
-        onRefresh: _refreshData,
+        onRefresh: refreshData,
         child: ListView.builder(
           padding: EdgeInsets.symmetric(vertical: 12),
           itemCount: coaches.length,
@@ -119,7 +110,7 @@ class _CoachesTabState extends State<CoachesTab> {
     );
   }
 
-  Widget _buildIos(BuildContext context, AsyncSnapshot<void> snapshot) {
+  Widget _buildIos(BuildContext context) {
     return CustomScrollView(
       slivers: [
         CupertinoSliverNavigationBar(
@@ -131,7 +122,7 @@ class _CoachesTabState extends State<CoachesTab> {
         ),
         CupertinoSliverRefreshControl(
           onRefresh: () async{
-            await _refreshData();
+            await refreshData();
           },
         ),
         SliverSafeArea(
@@ -152,8 +143,8 @@ class _CoachesTabState extends State<CoachesTab> {
 
   @override
   Widget build(context) {
-    return FutureBuilder<void>(
-      future: _refreshData(),
-      builder: _buildIos);
+    return PlatformWidget(
+      androidBuilder: _buildAndroid,
+      iosBuilder: _buildIos);
   }
 }

@@ -5,6 +5,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:running_society/variables.dart';
 
 import 'coaches_tab.dart';
 import 'home.dart';
@@ -81,7 +82,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
   // large number of items, a tab bar cannot. To illustrate one way of adjusting
   // for this, the app folds its fourth tab (the settings page) into the
   // third tab. This is a common pattern on iOS.
-  Widget _buildIosHomePage(BuildContext context) {
+  Widget _buildIosHomePage(BuildContext context, AsyncSnapshot<void> snapshot) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         items: [
@@ -135,9 +136,10 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
 
   @override
   Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroidHomePage,
-      iosBuilder: _buildIosHomePage,
+    return FutureBuilder(
+      future: refreshData(),
+      //androidBuilder: _buildAndroidHomePage,
+      builder: _buildIosHomePage,
     );
   }
 }
