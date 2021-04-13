@@ -251,7 +251,6 @@ class _LoginPageState extends State<LoginPage>
   }
 
   void _toggleSignInButton(BuildContext context) async {
-    // CustomSnackBar(context, Text(email));
     final response = await gotrueClient.signIn(email: loginEmailController.text,
         password: loginPasswordController.text);
     if (response.error != null) {
@@ -260,7 +259,6 @@ class _LoginPageState extends State<LoginPage>
     } else {
       var prefs = await SharedPreferences.getInstance();
       await prefs.setString(PERSIST_SESSION_KEY, response.data!.persistSessionString);
-
       await Navigator.of(context).push<void>(
         MaterialPageRoute(
           builder: (context) {

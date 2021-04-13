@@ -8,7 +8,7 @@ class CustomSnackBar {
       backgroundColor: backgroundColor,
       content: content,
       behavior: SnackBarBehavior.floating,
-      padding: const EdgeInsets.only(bottom: 40),
+      padding: const EdgeInsets.only(left: 30, bottom: 40),
     );
 
     ScaffoldMessenger.of(context).hideCurrentSnackBar();

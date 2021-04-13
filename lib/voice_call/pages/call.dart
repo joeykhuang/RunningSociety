@@ -253,9 +253,6 @@ class _CallPageState extends State<CallPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        previousPageTitle: 'Home',
-      ),
       child: Stack(
         children: <Widget>[
           _viewRows(),

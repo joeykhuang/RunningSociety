@@ -1,11 +1,10 @@
 import 'dart:collection';
-
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:running_society/calendar_utils/utils.dart';
-import 'supabase/config.dart';
+import 'db_utils.dart';
 
-//final List<List<String>> coachClasses = [['Classes', 'Beginner Running', 'Intermediate Running', 'Advanced Running'], ['Classes', 'Road to 5k', 'Your First Half-Marathon', 'Beginning Marathon', 'Boston Marathon'], ['Running']];
 final List<AssetImage> coachImages = [AssetImage('assets/coaches_images/daniel.jpg'), AssetImage('assets/coaches_images/elvis.jpg'), AssetImage('assets/coaches_images/kelton.jpg')];
 final kNow = DateTime.now();
 final kFirstDay = DateTime(kNow.year, kNow.month, kNow.day);
@@ -13,31 +12,7 @@ final kLastDay = DateTime(kNow.year, kNow.month + 1, kNow.day);
 
 List<String> coaches = <String>[];
 HashMap<String, List<String>> classes = HashMap();
-HashMap<String, List<Event>> classSchedule = HashMap();
-
-Future<List<dynamic>> getCoachNames () async {
-  final response = await client
-    .from('coaches')
-    .select('coach_name')
-    .execute();
-  return response.data as List<dynamic>;
-}
-
-Future<List<dynamic>> getCoachClasses () async {
-  final response = await client
-    .from('classes')
-    .select('coach_name, class_name')
-    .execute();
-  return response.data as List<dynamic>;
-}
-
-Future<List<dynamic>> getEvents () async {
-  final response = await client
-    .from('schedules')
-    .select('class_name, time, signed_up')
-    .execute();
-  return response.data as List<dynamic>;
-}
+HashMap<String, HashMap<DateTime, List<Event>>> classSchedule = HashMap();
 
 Future<void> refreshData() async {
   coaches = <String>[];
@@ -52,13 +27,20 @@ Future<void> refreshData() async {
     var coachName = coachClassesElem!['coach_name'] as String;
     var className = coachClassesElem!['class_name'] as String;
     classes[coachName]!.add(className);
-    classSchedule.addAll({className: <Event>[]});
   }
 
   var eventsRaw = await getEvents();
-  for (dynamic eventsElem in eventsRaw) {
-    var className = eventsElem!['class_name'] as String;
-    var time = eventsElem!['time'] as String;
-    classSchedule[className]!.add(Event(time.substring(11, 19)));
-  }
+  var groupbyClass = groupBy(eventsRaw, (dynamic obj) => obj!['class_name']);
+  groupbyClass.forEach((eachClass, list) {
+    var eachClassMap = HashMap<DateTime, List<Event>>();
+    var groupbyDate = groupBy(list, (dynamic obj) => obj['time'].substring(0, 10));
+    groupbyDate.forEach((date, dateStringList) {
+      var dateVar = DateTime.parse(date as String);
+      eachClassMap[dateVar] = [];
+      for (dynamic dateString in dateStringList){
+        eachClassMap[dateVar]!.add(Event((dateString['time'] as String).substring(11, 19)));
+      }
+    });
+    classSchedule[eachClass as String] = eachClassMap;
+  });
 }

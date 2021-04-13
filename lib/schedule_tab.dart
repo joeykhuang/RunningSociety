@@ -1,13 +1,11 @@
 import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:running_society/coach_detail_tab.dart';
-import 'package:running_society/coaches_tab.dart';
-import 'package:running_society/home.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'calendar_utils/utils.dart';
-import 'main.dart';
+import 'db_utils.dart';
 import 'variables.dart';
 import 'widgets.dart';
 
@@ -41,7 +39,10 @@ class _SchedulePageState extends State<ScheduleTab>
   @override
   void initState() {
     super.initState();
-    kEvents.addAll({DateTime.utc(2021, 4, 5): classSchedule[widget.className]!});
+
+    classSchedule[widget.className]?.forEach((date, classTimeList) {
+      kEvents.addAll({date: classTimeList});
+    });
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }
@@ -146,7 +147,7 @@ class _SchedulePageState extends State<ScheduleTab>
                 return ListView.builder(
                   itemCount: value.length,
                   itemBuilder: (context, index) {
-                    return Container(
+                    var container = Container(
                       margin: const EdgeInsets.symmetric(
                         horizontal: 12.0,
                         vertical: 4.0,
@@ -167,7 +168,10 @@ class _SchedulePageState extends State<ScheduleTab>
                                 actions: [
                                   CupertinoActionSheetAction(
                                     child: const Text('Schedule'),
-                                    onPressed: () => Navigator.of(context).pop(),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      addToRegistry(context);
+                                    },
                                   ),
                                 ],
                                 cancelButton: CupertinoActionSheetAction(
@@ -182,6 +186,7 @@ class _SchedulePageState extends State<ScheduleTab>
                         title: Text('${value[index]}'),
                       ),
                     );
+                    return container;
                   },
                 );
               },
