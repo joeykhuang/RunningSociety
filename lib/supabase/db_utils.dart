@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:running_society/login/widgets/snackbar.dart';
+import 'package:running_society/widgets/snackbar.dart';
 import 'package:running_society/supabase/config.dart';
 
 Future<void> addToRegistry(BuildContext context) async {

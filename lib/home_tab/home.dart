@@ -1,10 +1,10 @@
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:running_society/voice_call/pages/call.dart';
+import 'package:running_society/widgets/widgets.dart';
 
+import 'voice_call/pages/call.dart';
 import 'voice_call/pages/index.dart';
-import 'widgets.dart';
 
 
 class HomeTab extends StatelessWidget {

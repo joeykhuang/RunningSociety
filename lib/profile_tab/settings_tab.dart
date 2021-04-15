@@ -5,7 +5,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'widgets.dart';
+import '../widgets/widgets.dart';
 
 class SettingsTab extends StatefulWidget {
   static const title = 'Settings';

@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'coach_detail_tab.dart';
-import 'variables.dart';
-import 'widgets.dart';
+import '../variables.dart';
+import '../widgets/widgets.dart';
 
 class CoachesTab extends StatefulWidget {
   static const title = 'Coaches';

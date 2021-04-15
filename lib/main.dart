@@ -7,12 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:running_society/variables.dart';
 
-import 'coaches_tab.dart';
-import 'home.dart';
-import 'news_tab.dart';
-import 'profile_tab.dart';
-import 'settings_tab.dart';
-import 'widgets.dart';
+import 'coaches_tab/coaches_tab.dart';
+import 'home_tab/home.dart';
+import 'profile_tab/profile_tab.dart';
+import 'profile_tab/settings_tab.dart';
+import 'widgets/widgets.dart';
 
 void main() => runApp(MyAdaptingApp());
 
@@ -95,10 +94,6 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
             icon: CoachesTab.iosIcon,
           ),
           BottomNavigationBarItem(
-            label: NewsTab.title,
-            icon: NewsTab.iosIcon,
-          ),
-          BottomNavigationBarItem(
             label: ProfileTab.title,
             icon: ProfileTab.iosIcon,
           ),
@@ -117,11 +112,6 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
               builder: (context) => CoachesTab(key: TabKey),
             );
           case 2:
-            return CupertinoTabView(
-              defaultTitle: NewsTab.title,
-              builder: (context) => NewsTab(),
-            );
-          case 3:
             return CupertinoTabView(
               defaultTitle: ProfileTab.title,
               builder: (context) => ProfileTab(),
@@ -167,15 +157,6 @@ class _AndroidDrawer extends StatelessWidget {
             title: Text(CoachesTab.title),
             onTap: () {
               Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: NewsTab.androidIcon,
-            title: Text(NewsTab.title),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push<void>(
-                  context, MaterialPageRoute(builder: (context) => NewsTab()));
             },
           ),
           ListTile(

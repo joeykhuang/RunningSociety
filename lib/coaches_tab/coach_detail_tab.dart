@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:running_society/schedule_tab.dart';
+import 'package:running_society/coaches_tab/schedule_tab.dart';
 
-import 'variables.dart';
-import 'widgets.dart';
+import '../variables.dart';
+import '../widgets/widgets.dart';
 
 /// Coach available times
 class CoachAvailableClass extends StatelessWidget {

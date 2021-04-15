@@ -2,8 +2,8 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:running_society/calendar_utils/utils.dart';
-import 'db_utils.dart';
+import 'widgets/calendar_utils/utils.dart';
+import 'supabase/db_utils.dart';
 
 final List<AssetImage> coachImages = [AssetImage('assets/coaches_images/daniel.jpg'), AssetImage('assets/coaches_images/elvis.jpg'), AssetImage('assets/coaches_images/kelton.jpg')];
 final kNow = DateTime.now();

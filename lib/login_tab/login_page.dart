@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:running_society/supabase/config.dart';
 import 'package:running_society/theme.dart';
-import 'package:running_society/user_page.dart';
+import 'package:running_society/profile_tab/user_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widgets/snackbar.dart';

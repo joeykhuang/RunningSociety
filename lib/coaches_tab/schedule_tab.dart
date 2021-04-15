@@ -4,10 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import 'calendar_utils/utils.dart';
-import 'db_utils.dart';
-import 'variables.dart';
-import 'widgets.dart';
+import '../supabase/db_utils.dart';
+import '../variables.dart';
+import '../widgets/calendar_utils/utils.dart';
+import '../widgets/widgets.dart';
 
 class ScheduleTab extends StatefulWidget {
 

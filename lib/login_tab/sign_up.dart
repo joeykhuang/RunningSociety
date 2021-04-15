@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:running_society/login/pages/login_page.dart';
-import 'package:running_society/login/widgets/snackbar.dart';
 import 'package:running_society/supabase/config.dart';
 import 'package:running_society/theme.dart';
+import 'package:running_society/widgets/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'login_page.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
