@@ -316,7 +316,7 @@ class _SignUpState extends State<SignUp> {
       CustomSnackBar(context, Text('Email Verification Required'));
     } else {
       var prefs = await SharedPreferences.getInstance();
-      await prefs.setString(PERSIST_SESSION_KEY, response.data!.persistSessionString);
+      await prefs.setString(persistSessionKey, response.data!.persistSessionString);
       await Navigator.of(context).push<void>(
         MaterialPageRoute(
           builder: (context) {

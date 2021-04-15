@@ -195,14 +195,6 @@ class _CoachDetailTabState extends State<CoachDetailTab> {
     );
   }
 
-  Widget _listBuilder(BuildContext context, int index) {
-    return SafeArea(
-      top: false,
-      bottom: false,
-      child: Container(),
-    );
-  }
-
   // ===========================================================================
   // Non-shared code below because we're using different scaffolds.
   // ===========================================================================

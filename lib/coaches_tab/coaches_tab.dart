@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:running_society/variables.dart';
+import 'package:running_society/widgets/widgets.dart';
 
 import 'coach_detail_tab.dart';
-import '../variables.dart';
-import '../widgets/widgets.dart';
 
 class CoachesTab extends StatefulWidget {
   static const title = 'Coaches';

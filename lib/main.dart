@@ -4,14 +4,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:running_society/variables.dart';
 
 import 'coaches_tab/coaches_tab.dart';
 import 'home_tab/home.dart';
 import 'profile_tab/profile_tab.dart';
-import 'profile_tab/settings_tab.dart';
-import 'widgets/widgets.dart';
 
 void main() => runApp(MyAdaptingApp());
 
@@ -61,17 +58,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
   // the platform toggles.
   //
   // This isn't needed for apps that doesn't toggle platforms while running.
-  final TabKey = GlobalKey();
-
-  // In Material, this app uses the hamburger menu paradigm and flatly lists
-  // all 4 possible tabs. This drawer is injected into the  tab which is
-  // actually building the scaffold around the drawer.
-  Widget _buildAndroidHomePage(BuildContext context) {
-    return CoachesTab(
-      key: TabKey,
-      androidDrawer: _AndroidDrawer(),
-    );
-  }
+  final tabKey = GlobalKey();
 
   // On iOS, the app uses a bottom tab paradigm. Here, each tab view sits inside
   // a tab in the tab scaffold. The tab scaffold also positions the tab bar
@@ -109,7 +96,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
           case 1:
             return CupertinoTabView(
               defaultTitle: CoachesTab.title,
-              builder: (context) => CoachesTab(key: TabKey),
+              builder: (context) => CoachesTab(key: tabKey),
             );
           case 2:
             return CupertinoTabView(
@@ -130,60 +117,6 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
       future: refreshData(),
       //androidBuilder: _buildAndroidHomePage,
       builder: _buildIosHomePage,
-    );
-  }
-}
-
-class _AndroidDrawer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(color: Colors.green),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Icon(
-                Icons.account_circle,
-                color: Colors.green.shade800,
-                size: 96,
-              ),
-            ),
-          ),
-          ListTile(
-            leading: CoachesTab.androidIcon,
-            title: Text(CoachesTab.title),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: ProfileTab.androidIcon,
-            title: Text(ProfileTab.title),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push<void>(context,
-                  MaterialPageRoute(builder: (context) => ProfileTab()));
-            },
-          ),
-          // Long drawer contents are often segmented.
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Divider(),
-          ),
-          ListTile(
-            leading: SettingsTab.androidIcon,
-            title: Text(SettingsTab.title),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push<void>(context,
-                  MaterialPageRoute(builder: (context) => SettingsTab()));
-            },
-          ),
-        ],
-      ),
     );
   }
 }

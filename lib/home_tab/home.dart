@@ -45,24 +45,6 @@ class HomeTab extends StatelessWidget {
     );
   }
 
-  // ===========================================================================
-  // Non-shared code below because on iOS, the settings tab is nested inside of
-  // the profile tab as a button in the nav bar.
-  // ===========================================================================
-
-  Widget _buildAndroid(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: _buildBody(context),
-    );
-  }
-
-  Widget _buildIos(BuildContext context) {
-    return _buildBody(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     return _buildBody(context);
@@ -70,8 +52,7 @@ class HomeTab extends StatelessWidget {
 }
 
 class CallButton extends StatelessWidget {
-  static const _logoutMessage = Text(
-      "");
+  static const _logoutMessage = Text('');
 
   // ===========================================================================
   // Non-shared code below because this tab shows different interfaces. On

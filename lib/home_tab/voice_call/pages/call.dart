@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
-import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
-import 'package:agora_rtc_engine/rtc_remote_view.dart' as rtc_remote_view;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -46,7 +44,7 @@ class _CallPageState extends State<CallPage> {
   }
 
   Future<void> initialize() async {
-    if (APP_ID.isEmpty) {
+    if (appID.isEmpty) {
       setState(() {
         _infoStrings.add(
           'APP_ID missing, please provide your APP_ID in settings.dart',
@@ -58,16 +56,16 @@ class _CallPageState extends State<CallPage> {
 
     await _initAgoraRtcEngine();
     _addAgoraEventHandlers();
-    await _engine.enableWebSdkInteroperability(true);
     var configuration = VideoEncoderConfiguration();
     configuration.dimensions = VideoDimensions(1920, 1080);
     await _engine.setVideoEncoderConfiguration(configuration);
-    await _engine.joinChannel(Token, widget.channelName, null, 0);
+    await _engine.joinChannel(token, widget.channelName, null, 0);
   }
 
   /// Create agora sdk instance and initialize
   Future<void> _initAgoraRtcEngine() async {
-    _engine = await RtcEngine.create(APP_ID);
+    // ignore: deprecated_member_use
+    _engine = await RtcEngine.create(appID);
     await _engine.enableVideo();
     await _engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
     await _engine.setClientRole(widget.role);
@@ -108,26 +106,6 @@ class _CallPageState extends State<CallPage> {
         _infoStrings.add(info);
       });
     }));
-  }
-
-  /// Helper function to get list of native views
-  List<Widget> _getRenderViews() {
-    final list = <StatefulWidget>[];
-    if (widget.role == ClientRole.Broadcaster) {
-      list.add(rtc_local_view.SurfaceView());
-    }
-    _users.forEach((int uid) => list.add(rtc_remote_view.SurfaceView(uid: uid)));
-    return list;
-  }
-
-  /// Video view row wrapper
-  Widget _expandedVideoRow(List<Widget> views) {
-    final wrappedViews = <Widget>[];
-    return Expanded(
-      child: Row(
-        children: wrappedViews,
-      ),
-    );
   }
 
   /// Video layout wrapper
@@ -183,54 +161,6 @@ class _CallPageState extends State<CallPage> {
             padding: const EdgeInsets.all(12.0),
           )
         ],
-      ),
-    );
-  }
-
-  /// Info panel to show logs
-  Widget _panel() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 48),
-      alignment: Alignment.bottomCenter,
-      child: FractionallySizedBox(
-        heightFactor: 0.5,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 48),
-          child: ListView.builder(
-            reverse: true,
-            itemCount: _infoStrings.length,
-            itemBuilder: (BuildContext context, int index) {
-              if (_infoStrings.isEmpty) {}
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 3,
-                  horizontal: 10,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 2,
-                          horizontal: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.yellowAccent,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          _infoStrings[index],
-                          style: TextStyle(color: Colors.blueGrey),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
       ),
     );
   }

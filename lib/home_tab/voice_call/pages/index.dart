@@ -63,11 +63,9 @@ class IndexState extends State<IndexPage> {
                     leading: Radio(
                       value: ClientRole.Broadcaster,
                       groupValue: _role,
-                      onChanged: (ClientRole? value) {
-                        setState(() {
-                          _role = value!;
-                        });
-                      },
+                      onChanged: (value) => setState(() {
+                          _role = value! as ClientRole;
+                        }),
                     ),
                   ),
                   ListTile(
@@ -75,11 +73,9 @@ class IndexState extends State<IndexPage> {
                     leading: Radio(
                       value: ClientRole.Audience,
                       groupValue: _role,
-                      onChanged: (ClientRole? value) {
-                        setState(() {
-                          _role = value!;
-                        });
-                      },
+                      onChanged: (value) => setState(() {
+                          _role = value! as ClientRole;
+                        }),
                     ),
                   )
                 ],
@@ -89,11 +85,9 @@ class IndexState extends State<IndexPage> {
                 child: Row(
                   children: <Widget>[
                     Expanded(
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         onPressed: onJoin,
                         child: Text('Join'),
-                        color: Colors.blueAccent,
-                        textColor: Colors.white,
                       ),
                     )
                   ],
