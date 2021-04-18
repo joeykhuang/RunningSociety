@@ -11,10 +11,6 @@ class CoachesTab extends StatefulWidget {
   static const androidIcon = Icon(Icons.music_note);
   static const iosIcon = Icon(CupertinoIcons.person_3_fill);
 
-  const CoachesTab({Key? key, this.androidDrawer}) : super(key: key);
-
-  final Widget? androidDrawer;
-
   @override
   _CoachesTabState createState() => _CoachesTabState();
 }
@@ -70,47 +66,7 @@ class _CoachesTabState extends State<CoachesTab> {
     WidgetsBinding.instance!.reassembleApplication();
   }
 
-  // ===========================================================================
-  // Non-shared code below because:
-  // - Android and iOS have different scaffolds
-  // - There are differenc items in the app bar / nav bar
-  // - Android has a hamburger drawer, iOS has bottom tabs
-  // - The iOS nav bar is scrollable, Android is not
-  // - Pull-to-refresh works differently, and Android has a button to trigger it too
-  //
-  // And these are all design time choices that doesn't have a single 'right'
-  // answer.
-  // ===========================================================================
-  Widget _buildAndroid(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(CoachesTab.title),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () async =>
-                await _androidRefreshKey.currentState!.show(),
-          ),
-          IconButton(
-            icon: Icon(Icons.shuffle),
-            onPressed: _togglePlatform,
-          ),
-        ],
-      ),
-      drawer: widget.androidDrawer,
-      body: RefreshIndicator(
-        key: _androidRefreshKey,
-        onRefresh: refreshData,
-        child: ListView.builder(
-          padding: EdgeInsets.symmetric(vertical: 12),
-          itemCount: coaches.length,
-          itemBuilder: _listBuilder,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIos(BuildContext context) {
+  Widget _buildIos(BuildContext context, AsyncSnapshot<void> snapshot) {
     return CustomScrollView(
       slivers: [
         CupertinoSliverNavigationBar(
@@ -143,8 +99,9 @@ class _CoachesTabState extends State<CoachesTab> {
 
   @override
   Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos);
+    return FutureBuilder(
+      future: refreshData(),
+      builder: _buildIos,
+    );
   }
 }

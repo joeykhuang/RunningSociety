@@ -5,6 +5,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:running_society/variables.dart';
+import 'package:running_society/widgets/app_bar.dart';
+import 'package:running_society/widgets/navigation_bar.dart';
 
 import 'coaches_tab/coaches_tab.dart';
 import 'home_tab/home.dart';
@@ -52,62 +54,43 @@ class PlatformAdaptingHomePage extends StatefulWidget {
 }
 
 class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
-  // This app keeps a global key for the  tab because it owns a bunch of
-  // data. Since changing platform re-parents those tabs into different
-  // scaffolds, keeping a global key to it lets this app keep that tab's data as
-  // the platform toggles.
-  //
-  // This isn't needed for apps that doesn't toggle platforms while running.
   final tabKey = GlobalKey();
 
-  // On iOS, the app uses a bottom tab paradigm. Here, each tab view sits inside
-  // a tab in the tab scaffold. The tab scaffold also positions the tab bar
-  // in a row at the bottom.
-  //
-  // An important thing to note is that while a Material Drawer can display a
-  // large number of items, a tab bar cannot. To illustrate one way of adjusting
-  // for this, the app folds its fourth tab (the settings page) into the
-  // third tab. This is a common pattern on iOS.
-  Widget _buildIosHomePage(BuildContext context, AsyncSnapshot<void> snapshot) {
-    return CupertinoTabScaffold(
-      tabBar: CupertinoTabBar(
-        items: [
-          BottomNavigationBarItem(
-              label: HomeTab.title,
-              icon: HomeTab.iosIcon,
+  var _selectedIndex = 0;
+  List<Widget> _children = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _children = [HomeTab(), CoachesTab(), ProfileTab()];
+  }
+
+  Widget _buildHomePage(BuildContext context, AsyncSnapshot<void> snapshot) {
+    return Scaffold(
+      appBar: CustomAppBar('Home'),
+      body: _children[_selectedIndex],
+      bottomNavigationBar: NavigationBar(
+        onTabSelected: (value) {
+          setState(() {
+            _selectedIndex = value;
+          });
+        },
+        children: [
+          CustomNavigationBarItem(
+            icon: HomeTab.iosIcon.icon!,
+            hasNotification: false,
           ),
-          BottomNavigationBarItem(
-            label: CoachesTab.title,
-            icon: CoachesTab.iosIcon,
+          CustomNavigationBarItem(
+            icon: CoachesTab.iosIcon.icon!,
+            hasNotification: false,
           ),
-          BottomNavigationBarItem(
-            label: ProfileTab.title,
-            icon: ProfileTab.iosIcon,
+          CustomNavigationBarItem(
+            icon: ProfileTab.iosIcon.icon!,
+            hasNotification: false,
           ),
         ],
       ),
-      tabBuilder: (context, index) {
-        switch (index) {
-          case 0:
-            return CupertinoTabView(
-              defaultTitle: HomeTab.title,
-              builder: (context) => HomeTab(),
-            );
-          case 1:
-            return CupertinoTabView(
-              defaultTitle: CoachesTab.title,
-              builder: (context) => CoachesTab(key: tabKey),
-            );
-          case 2:
-            return CupertinoTabView(
-              defaultTitle: ProfileTab.title,
-              builder: (context) => ProfileTab(),
-            );
-          default:
-            assert(false, 'Unexpected tab');
-            return SizedBox.shrink();
-        }
-      },
     );
   }
 
@@ -115,8 +98,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
   Widget build(context) {
     return FutureBuilder(
       future: refreshData(),
-      //androidBuilder: _buildAndroidHomePage,
-      builder: _buildIosHomePage,
+      builder: _buildHomePage,
     );
   }
 }
