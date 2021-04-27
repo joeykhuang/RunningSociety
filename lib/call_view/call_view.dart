@@ -24,7 +24,6 @@ class _CallViewState extends State<CallView> {
   int? _room;
   String? _user;
   bool? _enabledMicrophone;
-  QualityEnum? _quality = QualityEnum.Speech;
   Map<String?, TencentRtcVideoViewController?> _users = {};
 
   _rtcListener(type, params) async {
@@ -67,6 +66,15 @@ class _CallViewState extends State<CallView> {
     await Permission.microphone.request().isGranted;
   }
 
+  _onMicrophoneClick() async {
+    if (_enabledMicrophone!) {
+      await TencentRtcPlugin.stopLocalAudio();
+    } else {
+      await TencentRtcPlugin.startLocalAudio();
+    }
+    setState(() => _enabledMicrophone = !_enabledMicrophone!);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -74,7 +82,7 @@ class _CallViewState extends State<CallView> {
     TencentRtcPlugin.enableAudioVolumeEvaluation(intervalMs: 100);
     _room = 123456;
     _user = 'joey';
-    _enabledMicrophone = true;
+    _enabledMicrophone = false;
     _users[_user] = null;
     _onEnterRoom();
     if (_enabledMicrophone!) {
@@ -142,11 +150,19 @@ class _CallViewState extends State<CallView> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CupertinoButton (
+                  CupertinoButton(
+                      child: _enabledMicrophone! ? Icon(CupertinoIcons.mic_fill): Icon(CupertinoIcons.mic_slash_fill),
+                      onPressed: _onMicrophoneClick,
+                  ),
+                  CupertinoButton(
                     child: Icon(CupertinoIcons.phone),
                     onPressed: () => Navigator.of(context).pop(),
                     color: Colors.redAccent,
                     borderRadius: BorderRadius.circular(20),
+                  ),
+                  CupertinoButton(
+                      child: Icon(CupertinoIcons.chat_bubble, color: Colors.blue,),
+                      onPressed: null
                   )
                 ],
               ),
