@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:running_society/variables.dart';
+import 'package:running_society/widgets/app_bar.dart';
+import 'package:running_society/widgets/navigation_bar.dart';
 import 'package:running_society/widgets/widgets.dart';
 
 import 'coach_detail_tab.dart';
@@ -49,51 +51,16 @@ class _CoachesTabState extends State<CoachesTab> {
     );
   }
 
-  void _togglePlatform() {
-    TargetPlatform _getOppositePlatform() {
-      if (defaultTargetPlatform == TargetPlatform.iOS) {
-        return TargetPlatform.android;
-      } else {
-        return TargetPlatform.iOS;
-      }
-    }
-
-    debugDefaultTargetPlatformOverride = _getOppositePlatform();
-    // This rebuilds the application. This should obviously never be
-    // done in a real app but it's done here since this app
-    // unrealistically toggles the current platform for demonstration
-    // purposes.
-    WidgetsBinding.instance!.reassembleApplication();
-  }
-
   Widget _buildIos(BuildContext context, AsyncSnapshot<void> snapshot) {
-    return CustomScrollView(
-      slivers: [
-        CupertinoSliverNavigationBar(
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            child: Icon(CupertinoIcons.shuffle),
-            onPressed: _togglePlatform,
-          ),
-        ),
-        CupertinoSliverRefreshControl(
-          onRefresh: () async{
-            await refreshData();
-          },
-        ),
-        SliverSafeArea(
-          top: false,
-          sliver: SliverPadding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                _listBuilder,
-                childCount: coaches.length,
-              ),
-            ),
-          ),
-        ),
-      ],
+    return SafeArea(
+      child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200,
+              childAspectRatio: 3 / 2,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20),
+          itemCount: coaches.length,
+          itemBuilder: _listBuilder),
     );
   }
 

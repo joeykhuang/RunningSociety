@@ -11,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>platform_design</string>
+	<string>flutter_try</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -41,36 +41,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-
-
-	<!-- Permission options for the `location` group -->
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need location when in use</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Always and when in use!</string>
-	<key>NSLocationUsageDescription</key>
-	<string>Older devices need location.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Can I have location always?</string>
-
-	<!-- Permission options for the `calendar` group -->
-	<key>NSCalendarsUsageDescription</key>
-	<string>Calendars</string>
-
-	<!-- Permission options for the `camera` group -->
-	<key>NSCameraUsageDescription</key>
-	<string>camera</string>
-
-	<!-- Permission options for the `microphone` group -->
 	<key>NSMicrophoneUsageDescription</key>
-	<string>microphone</string>
-
-	<!-- Permission options for the `sensors` group -->
-	<key>NSMotionUsageDescription</key>
-	<string>motion</string>
-
-	<!-- Permission options for the `reminder` group -->
-	<key>NSRemindersUsageDescription</key>
-	<string>reminders</string>
+	<string>Asking for microphone</string>
 </dict>
 </plist>
