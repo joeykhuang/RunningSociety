@@ -1,5 +1,12 @@
 .idea/
 .dart_tool/
 android/
-buid/
+build/
 .pubspec.lock
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+ios/Podfile.lock
+web/
+pubspec.lock
+android/
