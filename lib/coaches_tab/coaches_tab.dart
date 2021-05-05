@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:running_society/variables.dart';
-import 'package:running_society/widgets/app_bar.dart';
-import 'package:running_society/widgets/navigation_bar.dart';
 import 'package:running_society/widgets/widgets.dart';
 
 import 'coach_detail_tab.dart';
@@ -18,7 +16,6 @@ class CoachesTab extends StatefulWidget {
 }
 
 class _CoachesTabState extends State<CoachesTab> {
-  final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {

@@ -1,17 +1,16 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:running_society/theme.dart';
 import 'package:running_society/widgets/app_bar.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tencent_rtc_plugin/controller/tencent_rtc_video_view_controller.dart';
 import 'package:tencent_rtc_plugin/entity/user_available_entity.dart';
 import 'package:tencent_rtc_plugin/enums/listener_type_enum.dart';
-import 'package:tencent_rtc_plugin/enums/quality_enum.dart';
-import 'package:tencent_rtc_plugin/enums/role_enum.dart';
 import 'package:tencent_rtc_plugin/enums/scene_enum.dart';
+import 'package:flutter/services.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:tencent_rtc_plugin/tencent_rtc_plugin.dart';
-import 'package:tencent_rtc_plugin/tencent_rtc_video_view.dart';
 
 import 'global.dart';
 
@@ -25,6 +24,13 @@ class _CallViewState extends State<CallView> {
   String? _user;
   bool? _enabledMicrophone;
   Map<String?, TencentRtcVideoViewController?> _users = {};
+
+  String _heartRate = '0.0';
+  String _time = '0:00';
+  String _steps = '0 Steps';
+  String _distance = '0 KM';
+  static const channel = const MethodChannel('myWatchChannel');
+  final eventChannel = const EventChannel('heartRateStreamChannel');
 
   _rtcListener(type, params) async {
     if (type == ListenerTypeEnum.Log) {
@@ -45,6 +51,13 @@ class _CallViewState extends State<CallView> {
     }
   }
 
+  _heartRateHandler(dynamic event) {
+    final String heartRate = event.toString();
+    print(heartRate);
+    setState(() {
+      _heartRate = heartRate;
+    });
+  }
   // ignore: always_declare_return_types
   _onEnterRoom() async {
     print('entering room');
@@ -88,11 +101,14 @@ class _CallViewState extends State<CallView> {
     if (_enabledMicrophone!) {
       TencentRtcPlugin.startLocalAudio();
     }
+    eventChannel.receiveBroadcastStream().listen(_heartRateHandler);
+    channel.invokeMethod('beginWorkout');
   }
 
   @override
   void dispose() {
     super.dispose();
+    channel.invokeMethod('endWorkout');
     TencentRtcPlugin.removeListener(_rtcListener);
     TencentRtcPlugin.exitRoom();
   }
@@ -134,19 +150,79 @@ class _CallViewState extends State<CallView> {
               ),
             ), // Light Jog Text
             Padding(
-              padding: EdgeInsets.only(top: 20),
-              child: SizedBox(
-                height: 300,
-                width: 350,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black38
+              padding: EdgeInsets.only(left: 50, top: 40),
+              child: Row(
+                children: [
+                  Icon(
+                    CupertinoIcons.heart,
+                    color: CustomTheme.orangeTint,
                   ),
-                ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 20),
+                    child: Text(
+                      _heartRate,
+                      style: Theme.of(context).textTheme.headline4,
+                    )
+                  )
+                ]
               )
             ),
             Padding(
-              padding: EdgeInsets.only(top: 30),
+                padding: EdgeInsets.only(left: 250, top: 5),
+                child: Row(
+                    children: [
+                      Text(
+                        _time,
+                        style: Theme.of(context).textTheme.headline4,
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: Icon(
+                            CupertinoIcons.time,
+                            color: CustomTheme.orangeTint,
+                          ),
+                      )
+                    ]
+                )
+            ),
+            Padding(
+                padding: EdgeInsets.only(left: 50, top: 5),
+                child: Row(
+                    children: [
+                      Icon(
+                        Icons.run_circle_outlined,
+                        color: CustomTheme.orangeTint,
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: Text(
+                            _steps,
+                            style: Theme.of(context).textTheme.headline4,
+                          )
+                      )
+                    ]
+                )
+            ),
+            Padding(
+                padding: EdgeInsets.only(left: 250, top: 5),
+                child: Row(
+                    children: [
+                      Text(
+                        _distance,
+                        style: Theme.of(context).textTheme.headline4,
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: Icon(
+                            CupertinoIcons.placemark_fill,
+                            color: CustomTheme.orangeTint,
+                          ),
+                      )
+                    ]
+                )
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 180),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

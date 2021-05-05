@@ -5,22 +5,17 @@ environment:
   sdk: '>=2.12.0-0 <3.0.0'
 
 dependencies:
-  english_words: ^4.0.0-nullsafety.0
-  flutter_lorem: ^2.0.0
   flutter:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
   supabase: ^0.0.1-dev.10
   google_fonts: ^2.0.0
-  convex_bottom_bar: ^3.0.0
   font_awesome_flutter: ^9.0.0
   table_calendar: ^3.0.0-nullsafety.1
   gotrue: ^0.0.1-dev.9
   shared_preferences: ^2.0.5
-  rounded_loading_button: ^1.0.18
-  url_launcher: ^6.0.3
-  tencent_rtc_plugin: ^2.0.0
+  tencent_rtc_plugin:
   permission_handler:
 
 dev_dependencies:
