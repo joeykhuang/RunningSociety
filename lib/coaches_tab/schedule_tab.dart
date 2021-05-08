@@ -4,10 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../supabase/db_utils.dart';
-import '../variables.dart';
-import '../widgets/calendar_utils/utils.dart';
-import '../widgets/widgets.dart';
+import 'package:running_society/widgets/calendar_utils/utils.dart';
+import 'package:running_society/widgets/widgets.dart';
+import 'package:running_society/variables.dart';
+import 'package:running_society/config/db_utils.dart';
 
 class ScheduleTab extends StatefulWidget {
 
@@ -170,7 +170,7 @@ class _SchedulePageState extends State<ScheduleTab>
                                     child: const Text('Schedule'),
                                     onPressed: () {
                                       Navigator.of(context).pop();
-                                      addToRegistry(context);
+                                      //addToRegistry(context);
                                     },
                                   ),
                                 ],

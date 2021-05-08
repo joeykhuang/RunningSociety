@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:running_society/theme.dart';
 import 'package:running_society/widgets/app_bar.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tencent_im_plugin/tencent_im_plugin.dart';
 import 'package:tencent_rtc_plugin/controller/tencent_rtc_video_view_controller.dart';
 import 'package:tencent_rtc_plugin/entity/user_available_entity.dart';
 import 'package:tencent_rtc_plugin/enums/listener_type_enum.dart';
@@ -11,7 +12,11 @@ import 'package:tencent_rtc_plugin/enums/scene_enum.dart';
 import 'package:flutter/services.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:tencent_rtc_plugin/tencent_rtc_plugin.dart';
+import 'package:tencent_im_plugin/entity/conversation_entity.dart';
+import 'GenerateUserSig.dart';
+import 'package:running_society/config/config.dart';
 
+import 'chat_view/chat_view.dart';
 import 'global.dart';
 
 class CallView extends StatefulWidget {
@@ -24,6 +29,7 @@ class _CallViewState extends State<CallView> {
   String? _user;
   bool? _enabledMicrophone;
   Map<String?, TencentRtcVideoViewController?> _users = {};
+  String _userName = 'joey';
 
   String _heartRate = '0.0';
   String _time = '0:00';
@@ -31,6 +37,8 @@ class _CallViewState extends State<CallView> {
   String _distance = '0 KM';
   static const channel = const MethodChannel('myWatchChannel');
   final eventChannel = const EventChannel('heartRateStreamChannel');
+
+  late ConversationEntity _conversation;
 
   _rtcListener(type, params) async {
     if (type == ListenerTypeEnum.Log) {
@@ -62,13 +70,13 @@ class _CallViewState extends State<CallView> {
   _onEnterRoom() async {
     print('entering room');
     var userSig = await TencentRtcPlugin.genUserSig(
-        appid: Global.appid,
-        secretKey: Global.secretKey,
+        appid: appId,
+        secretKey: secretKey,
         userId: _user!,
     );
 
     TencentRtcPlugin.enterRoom(
-      appid: Global.appid,
+      appid: appId,
       userId: _user!,
       userSig: userSig,
       roomId: _room!,
@@ -87,8 +95,28 @@ class _CallViewState extends State<CallView> {
     }
     setState(() => _enabledMicrophone = !_enabledMicrophone!);
   }
+  _onLogin() async {
+    String sign = GenerateTestUserSig(
+      sdkappid: appId,
+      key: secretKey
+    ).genSig(identifier: _userName, expire: 1 * 60 * 1000);
 
-  @override
+    await TencentImPlugin.login(
+        userID: _userName,
+        userSig: sign
+    );
+    var _loggedinUserName = await TencentImPlugin.getLoginUser();
+    print("logged in with user " + _loggedinUserName!);
+  }
+
+  void _getConversation() async {
+    var tempConversation = await TencentImPlugin.getConversation(groupID: '@TGS#1CUTQPEHZ');
+    setState(() {
+      _conversation = tempConversation;
+    });
+  }
+
+    @override
   void initState() {
     super.initState();
     TencentRtcPlugin.addListener(_rtcListener);
@@ -97,7 +125,9 @@ class _CallViewState extends State<CallView> {
     _user = 'joey';
     _enabledMicrophone = false;
     _users[_user] = null;
+    _onLogin();
     _onEnterRoom();
+    _getConversation();
     if (_enabledMicrophone!) {
       TencentRtcPlugin.startLocalAudio();
     }
@@ -238,7 +268,8 @@ class _CallViewState extends State<CallView> {
                   ),
                   CupertinoButton(
                       child: Icon(CupertinoIcons.chat_bubble, color: Colors.blue,),
-                      onPressed: null
+                      onPressed: () => Navigator.of(context).push(CupertinoPageRoute(
+                        builder: (context) => ChatView(conversation: _conversation)))
                   )
                 ],
               ),

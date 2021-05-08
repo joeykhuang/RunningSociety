@@ -23,8 +23,7 @@ class _CoachesTabState extends State<CoachesTab> {
   }
 
   Widget _listBuilder(BuildContext context, int index) {
-    if (index >= coaches.length) return Container();
-    if (coaches.isEmpty) return Container();
+    if (numCoaches == 0) return Container();
     return SafeArea(
       top: false,
       bottom: false,
@@ -48,24 +47,32 @@ class _CoachesTabState extends State<CoachesTab> {
     );
   }
 
-  Widget _buildIos(BuildContext context, AsyncSnapshot<void> snapshot) {
-    return SafeArea(
-      child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 200,
-              childAspectRatio: 3 / 2,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20),
-          itemCount: coaches.length,
-          itemBuilder: _listBuilder),
-    );
-  }
-
   @override
   Widget build(context) {
     return FutureBuilder(
       future: refreshData(),
-      builder: _buildIos,
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SafeArea(child: Text('Waiting'));
+        } else {
+          return CustomScrollView(
+            slivers: [
+              SliverSafeArea(
+                top: false,
+                sliver: SliverPadding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      _listBuilder,
+                      childCount: numCoaches,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+      }
     );
   }
 }

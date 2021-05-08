@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:running_society/supabase/config.dart';
 import 'package:running_society/theme.dart';
 import 'package:running_society/widgets/snackbar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login_page.dart';
 
@@ -225,9 +223,7 @@ class _SignUpState extends State<SignUp> {
                                       ),
                                     ),
                                   ),
-                                  onSubmitted: (_) {
-                                    _toggleSignUpButton();
-                                  },
+                                  onSubmitted: (_) {},
                                   textInputAction: TextInputAction.go,
                                 ),
                               ),
@@ -281,7 +277,7 @@ class _SignUpState extends State<SignUp> {
                                   fontFamily: 'WorkSansBold'),
                             ),
                           ),
-                          onPressed: () => _toggleSignUpButton(),
+                          onPressed: (){}
                         ),
                       )
                     ],
@@ -306,26 +302,26 @@ class _SignUpState extends State<SignUp> {
         ));
   }
 
-  Future<void> _toggleSignUpButton() async {
-    final response = await gotrueClient.signUp(signupEmailController.text, signupPasswordController.text);
-    if (response.error != null) {
-      CustomSnackBar(context, Text('Sign Up Failed'));
-      signupPasswordController.clear();
-      signupConfirmPasswordController.clear();
-    } else if (response.data == null && response.user == null) {
-      CustomSnackBar(context, Text('Email Verification Required'));
-    } else {
-      var prefs = await SharedPreferences.getInstance();
-      await prefs.setString(persistSessionKey, response.data!.persistSessionString);
-      await Navigator.of(context).push<void>(
-        MaterialPageRoute(
-          builder: (context) {
-            return LoginPage();
-          },
-        ),
-      );
-    }
-  }
+  //Future<void> _toggleSignUpButton() async {
+  //  final response = await gotrueClient.signUp(signupEmailController.text, signupPasswordController.text);
+  //  if (response.error != null) {
+  //    CustomSnackBar(context, Text('Sign Up Failed'));
+  //    signupPasswordController.clear();
+  //    signupConfirmPasswordController.clear();
+  //  } else if (response.data == null && response.user == null) {
+  //    CustomSnackBar(context, Text('Email Verification Required'));
+  //  } else {
+  //    var prefs = await SharedPreferences.getInstance();
+  //    await prefs.setString(persistSessionKey, response.data!.persistSessionString);
+  //    await Navigator.of(context).push<void>(
+  //      MaterialPageRoute(
+  //        builder: (context) {
+  //          return LoginPage();
+  //        },
+  //      ),
+  //    );
+  //  }
+  //}
 
   void _toggleSignup() {
     setState(() {

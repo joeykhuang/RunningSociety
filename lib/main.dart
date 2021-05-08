@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:running_society/variables.dart';
 import 'package:running_society/widgets/app_bar.dart';
 import 'package:running_society/widgets/navigation_bar.dart';
+import 'package:tencent_im_plugin/tencent_im_plugin.dart';
+import 'package:tencent_rtc_plugin/tencent_rtc_plugin.dart';
 
 import 'coaches_tab/coaches_tab.dart';
 import 'home_tab/home.dart';
@@ -61,12 +63,12 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    TencentImPlugin.initSDK(appid: '1400512118');
     _children = [HomeTab(), CoachesTab(), ProfileTab()];
   }
 
-  Widget _buildHomePage(BuildContext context, AsyncSnapshot<void> snapshot) {
+  Widget _buildHomePage(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar('Home'),
       body: _children[_selectedIndex],
@@ -96,8 +98,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
 
   @override
   Widget build(context) {
-    return FutureBuilder(
-      future: refreshData(),
+    return Builder(
       builder: _buildHomePage,
     );
   }

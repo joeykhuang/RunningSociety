@@ -251,7 +251,7 @@ class HeroAnimatingCoachCard extends StatelessWidget {
           image: image,
           flattenAnimation: heroAnimation,
           child: SizedBox(
-            height: 610,
+            height: 320,
             child: Stack(
               alignment: Alignment.center,
               children: [
