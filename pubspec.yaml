@@ -9,14 +9,12 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
-  supabase: ^0.0.1-dev.10
-  google_fonts: ^2.0.0
-  font_awesome_flutter: ^9.0.0
   table_calendar: ^3.0.0-nullsafety.1
-  gotrue: ^0.0.1-dev.9
+  font_awesome_flutter: ^9.0.0
   shared_preferences: ^2.0.5
-  tencent_rtc_plugin:
-  permission_handler:
+  tencent_rtc_plugin: ^2.0.0
+  permission_handler: ^7.1.0
+  tencent_im_plugin: ^2.0.2
 
 dev_dependencies:
   flutter_test:
