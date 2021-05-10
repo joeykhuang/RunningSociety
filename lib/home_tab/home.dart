@@ -6,7 +6,7 @@ import 'package:running_society/theme.dart';
 class HomeTab extends StatelessWidget {
   static const title = 'Home';
   static const androidIcon = Icon(Icons.home);
-  static const iosIcon = Icon(CupertinoIcons.settings);
+  static const iosIcon = Icon(CupertinoIcons.home);
 
   Widget _buildBody(BuildContext context) {
     return Container(

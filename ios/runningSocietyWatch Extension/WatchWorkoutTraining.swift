@@ -1,6 +1,6 @@
 //
 //  WatchWorkoutTraining.swift
-//  watchApp Extension
+//  RunningSocietyWatch Extension
 //
 //  Created by Joey Huang on 2021/4/14.
 //
@@ -8,7 +8,7 @@
 import Foundation
 import HealthKit
 
-protocol WorkoutTrackingDelegate: class {
+protocol WorkoutTrackingDelegate: AnyObject {
     func didReceiveHealthKitHeartRate(_ heartRate: Double)
     func didReceiveHealthKitStepCounts(_ stepCounts: Double)
 }

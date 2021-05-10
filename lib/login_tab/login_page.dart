@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:running_society/config/cloudbase.dart';
 import 'package:running_society/theme.dart';
-import 'package:running_society/profile_tab/user_page.dart';
 
 import '../widgets/snackbar.dart';
 import 'sign_up.dart';
@@ -27,6 +27,19 @@ class _LoginPageState extends State<LoginPage>
   final FocusNode focusNodePassword = FocusNode();
 
   bool _obscureTextPassword = true;
+
+  /*
+  Future<String> callAuth(String customUserId) async {
+    await cloudBaseFunction.callFunction('token-auth', {
+      'customUserId': customUserId
+    }).then((value) {
+      return value.data['ticket'];
+    }).catchError((err) {
+      return '';
+    });
+    return '';
+  }
+   */
 
   @override
   void dispose() {
@@ -202,7 +215,7 @@ class _LoginPageState extends State<LoginPage>
                               fontFamily: 'WorkSansBold'),
                         ),
                       ),
-                      onPressed: (){}
+                      onPressed: (){ _toggleSignInButton(context);}
                     ),
                   )
                 ],
@@ -244,22 +257,16 @@ class _LoginPageState extends State<LoginPage>
     ));
   }
 
- // Future<void> _toggleSignInButton(BuildContext context) async {
- //   final response = await gotrueClient.signIn(email: loginEmailController.text, password: loginPasswordController.text);
- //   if (response.error != null) {
- //     CustomSnackBar(context, Text('Sign in Failed'));
- //     loginEmailController.clear();
- //   } else {
- //     var prefs = await SharedPreferences.getInstance();
- //     await Navigator.of(context).push<void>(
- //       MaterialPageRoute(
- //         builder: (context) {
- //           return UserTab();
- //         },
- //       ),
- //     );
- //   }
- // }
+  Future<void> _toggleSignInButton(BuildContext context) async {
+    /*
+    var ticket = await callAuth(loginEmailController.text + ":" + loginPasswordController.text);
+    await auth.signInWithTicket(ticket).then((success) => Navigator.of(context).pop()
+    ).catchError((err) {
+      CustomSnackBar(context, Text('Sign in Failed'));
+      loginEmailController.clear();
+    });
+     */
+  }
 
   void _toggleLogin() {
     setState(() {

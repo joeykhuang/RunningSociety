@@ -1,16 +1,9 @@
-//
-//  InterfaceController.swift
-//  RunningSocietyWatch Extension
-//
-//  Created by Joey Huang on 2021/4/14.
-//
-
 import WatchKit
 import HealthKit
 import Foundation
 import WatchConnectivity
 
-class InterfaceController: WKInterfaceController{    
+class InterfaceController: WKInterfaceController{
     @IBOutlet weak var heartRateLabel: WKInterfaceLabel!
     @IBOutlet weak var stepsLabel: WKInterfaceLabel!
 

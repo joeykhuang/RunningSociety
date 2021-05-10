@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>runningSocietyWatch Extension</string>
+	<string>RunningSocietyWatch Extension</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -32,6 +32,12 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.watchkit</string>
 	</dict>
+	<key>NSHealthClinicalHealthRecordsShareUsageDescription</key>
+	<string>Get Health Data</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Get Health Data</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Get Health Data</string>
 	<key>WKExtensionDelegateClassName</key>
 	<string>$(PRODUCT_MODULE_NAME).ExtensionDelegate</string>
 </dict>

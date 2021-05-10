@@ -1,6 +1,6 @@
 //
 //  WatchKitConnection.swift
-//  watchApp Extension
+//  RunningSocietyWatch Extension
 //
 //  Created by Joey Huang on 2021/4/14.
 //

@@ -8,7 +8,7 @@
 import Foundation
 import WatchConnectivity
 
-protocol WatchKitConnectionDelegate: class {
+protocol WatchKitConnectionDelegate: AnyObject {
     func didFinishedActiveSession()
 }
 

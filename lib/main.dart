@@ -4,14 +4,15 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:running_society/variables.dart';
+import 'package:running_society/config/config.dart';
 import 'package:running_society/widgets/app_bar.dart';
 import 'package:running_society/widgets/navigation_bar.dart';
+import 'package:running_society/config/cloudbase.dart';
 import 'package:tencent_im_plugin/tencent_im_plugin.dart';
-import 'package:tencent_rtc_plugin/tencent_rtc_plugin.dart';
 
-import 'coaches_tab/coaches_tab.dart';
 import 'home_tab/home.dart';
+import 'coaches_tab/coaches_tab.dart';
+import 'login_tab/login_page.dart';
 import 'profile_tab/profile_tab.dart';
 
 void main() => runApp(MyAdaptingApp());
@@ -56,17 +57,24 @@ class PlatformAdaptingHomePage extends StatefulWidget {
 }
 
 class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
-  final tabKey = GlobalKey();
-
   var _selectedIndex = 0;
   List<Widget> _children = [];
 
   @override
   void initState() {
     super.initState();
-    TencentImPlugin.initSDK(appid: '1400512118');
+    TencentImPlugin.initSDK(appid: appId.toString());
     _children = [HomeTab(), CoachesTab(), ProfileTab()];
   }
+
+  /*
+  Future<void> _login() async {
+    var tempLoginStatus = await auth.getAuthState();
+    if (tempLoginStatus == null) {
+      Navigator.of(context).push<void>(CupertinoPageRoute(builder: (context) => LoginPage()));
+    }
+  }
+   */
 
   Widget _buildHomePage(BuildContext context) {
     return Scaffold(
@@ -98,7 +106,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
 
   @override
   Widget build(context) {
-    return Builder(
+    return Builder (
       builder: _buildHomePage,
     );
   }
