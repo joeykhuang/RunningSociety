@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
+import 'package:running_society/config/db_utils.dart';
 import 'package:running_society/variables.dart';
 import 'package:running_society/widgets/widgets.dart';
 
@@ -17,9 +19,17 @@ class CoachesTab extends StatefulWidget {
 
 class _CoachesTabState extends State<CoachesTab> {
 
+  int numCoaches = 0;
+  late Results coaches;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> _getCoaches() async {
+    numCoaches = await dbGetNumCoaches();
+    coaches = await dbGetCoaches();
   }
 
   Widget _listBuilder(BuildContext context, int index) {
@@ -30,14 +40,14 @@ class _CoachesTabState extends State<CoachesTab> {
       child: Hero(
         tag: index,
         child: HeroAnimatingCoachCard(
-          coach: coaches[index],
+          coach: coaches.elementAt(index).values![1] as String,
           image: coachImages[index],
           heroAnimation: AlwaysStoppedAnimation(0),
           onPressed: () => Navigator.of(context).push<void>(
             MaterialPageRoute(
               builder: (context) => CoachDetailTab(
-                id: index,
-                coach: coaches[index],
+                id: coaches.elementAt(index).values![0] as int,
+                coach: coaches.elementAt(index).values![1] as String,
                 image: coachImages[index],
               ),
             ),
@@ -50,7 +60,7 @@ class _CoachesTabState extends State<CoachesTab> {
   @override
   Widget build(context) {
     return FutureBuilder(
-      future: refreshData(),
+      future: _getCoaches(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return SafeArea(child: Text('Waiting'));

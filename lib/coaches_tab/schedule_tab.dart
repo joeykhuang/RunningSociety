@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'package:running_society/widgets/calendar_utils/utils.dart';
@@ -11,10 +12,9 @@ import 'package:running_society/config/db_utils.dart';
 
 class ScheduleTab extends StatefulWidget {
 
-  const ScheduleTab({Key? key,
-    required this.className}) : super(key: key);
+  const ScheduleTab({Key? key, required this.classId}) : super(key: key);
 
-  final String className;
+  final int classId;
 
   @override
   _SchedulePageState createState() => _SchedulePageState();
@@ -23,6 +23,7 @@ class _SchedulePageState extends State<ScheduleTab>
     with SingleTickerProviderStateMixin {
 
   late final ValueNotifier<List<Event>> _selectedEvents;
+  late Results eventsRaw;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff;
   DateTime _focusedDay = DateTime.now();
@@ -35,14 +36,17 @@ class _SchedulePageState extends State<ScheduleTab>
     hashCode: getHashCode,
   );
 
+  Future<void> _getDayEvents(DateTime day) async {
+    eventsRaw = await dbGetEventsForClass(widget.classId, day.toString().substring(0, 10));
+    var eventsList = List<Event>.generate(eventsRaw.length, (index) => Event(
+        eventsRaw.elementAt(index).values![0] as int,
+        (eventsRaw.elementAt(index).values![1] as Duration).toString()));
+    kEvents.addEntries({MapEntry(day, eventsList)});
+  }
 
   @override
   void initState() {
     super.initState();
-
-    classSchedule[widget.className]?.forEach((date, classTimeList) {
-      kEvents.addAll({date: classTimeList});
-    });
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }
@@ -54,7 +58,7 @@ class _SchedulePageState extends State<ScheduleTab>
   }
 
   List<Event> _getEventsForDay(DateTime day) {
-    // Implementation example
+    _getDayEvents(day);
     return kEvents[day] ?? [];
   }
 
@@ -170,7 +174,7 @@ class _SchedulePageState extends State<ScheduleTab>
                                     child: const Text('Schedule'),
                                     onPressed: () {
                                       Navigator.of(context).pop();
-                                      //addToRegistry(context);
+                                      dbAddToRegistry(1, value[index].scheduleId, widget.classId);
                                     },
                                   ),
                                 ],
@@ -197,31 +201,22 @@ class _SchedulePageState extends State<ScheduleTab>
     );
   }
 
-  // ===========================================================================
-  // Non-shared code below because we're using different scaffolds.
-  // ===========================================================================
-
-  Widget _buildAndroid(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Schedule')),
-      body: _buildBody(),
-    );
-  }
-
-  Widget _buildIos(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Schedule'),
-        previousPageTitle: 'Coaches',
-      ),
-      child: _buildBody(),
-    );
-  }
-
   @override
   Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos);
+    return FutureBuilder(
+      future: _getDayEvents(DateTime.now()),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SafeArea(child: Text('Waiting'));
+        } else {
+          return CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text('Schedule'),
+              previousPageTitle: 'Coaches',
+            ),
+            child: _buildBody(),
+          );
+        }
+    });
   }
 }

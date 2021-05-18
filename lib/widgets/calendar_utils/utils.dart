@@ -3,8 +3,9 @@ import 'dart:math';
 /// Example event class.
 class Event {
   final String title;
+  final int scheduleId;
 
-  const Event(this.title);
+  const Event(this.scheduleId, this.title);
 
   @override
   String toString() => title;

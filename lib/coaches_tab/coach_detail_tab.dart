@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
 import 'package:running_society/coaches_tab/schedule_tab.dart';
+import 'package:running_society/config/db_utils.dart';
 
 import '../variables.dart';
 import '../widgets/widgets.dart';
@@ -8,12 +10,12 @@ import '../widgets/widgets.dart';
 /// Coach available times
 class CoachAvailableClass extends StatelessWidget {
   CoachAvailableClass({
-    required this.coachName,
     required this.className,
+    required this.classId,
   });
 
-  final String coachName;
   final String className;
+  final int classId;
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +38,8 @@ class CoachAvailableClass extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.symmetric(horizontal: 12),
                 child: ScheduleButton(
-                  coachName: coachName,
                   className: className,
+                  classId: classId,
                 ),
               ),
             ),
@@ -51,42 +53,15 @@ class CoachAvailableClass extends StatelessWidget {
 
 class ScheduleButton extends StatelessWidget {
   ScheduleButton({
-    required this.coachName,
     required this.className,
+    required this.classId,
   });
 
-  final String coachName;
   final String className;
+  final int classId;
 
-  Widget _buildAndroid(BuildContext context) {
-    return ElevatedButton(
-      child: Text(className, style: TextStyle(color: Colors.black45)),
-      onPressed: () {
-        // You should do something with the result of the dialog prompt in a
-        // real app but this is just a demo.
-        showDialog<void>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(className),
-              actions: [
-                TextButton(
-                  child: const Text('Schedule'),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildIos(BuildContext context) {
+  @override
+  Widget build(context) {
     return CupertinoButton(
       color: Colors.transparent,
       child: Text(
@@ -95,17 +70,9 @@ class ScheduleButton extends StatelessWidget {
       ),
       onPressed: () => Navigator.of(context).push<void>(
         MaterialPageRoute(
-          builder: (context) => ScheduleTab(className: className),
+          builder: (context) => ScheduleTab(classId: classId),
         ),
       ),
-    );
-  }
-
-  @override
-  Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos,
     );
   }
 }
@@ -127,13 +94,18 @@ class CoachDetailTab extends StatefulWidget {
 
 class _CoachDetailTabState extends State<CoachDetailTab> {
 
+  late Results coachClasses;
+
+  Future<void> _getCoachClasses() async {
+    coachClasses = await dbGetClasses(widget.id);
+  }
+
   @override
   void initState() {
     super.initState();
   }
 
   Widget _buildBody() {
-    var coachClasses = classes[widget.coach]!;
     return SafeArea(
       bottom: false,
       left: false,
@@ -165,27 +137,20 @@ class _CoachDetailTabState extends State<CoachDetailTab> {
             height: 0,
             color: Colors.grey,
           ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15, top: 16, bottom: 8),
+            child: Text(
+              'Classes Available:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: coachClasses.length,
               itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Padding(
-                    padding:
-                    const EdgeInsets.only(left: 15, top: 16, bottom: 8),
-                    child: Text(
-                      'Classes Available:',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  );
-                }
-                // Just a bunch of boxes that simulates loading coach choices.
                 return CoachAvailableClass(
-                  coachName: widget.coach,
-                  className: coachClasses[index],
+                  className: coachClasses.elementAt(index).values![1] as String,
+                  classId: coachClasses.elementAt(index).values![0] as int,
                 );
               },
             ),
@@ -195,31 +160,22 @@ class _CoachDetailTabState extends State<CoachDetailTab> {
     );
   }
 
-  // ===========================================================================
-  // Non-shared code below because we're using different scaffolds.
-  // ===========================================================================
-
-  Widget _buildAndroid(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.coach)),
-      body: _buildBody(),
-    );
-  }
-
-  Widget _buildIos(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(widget.coach),
-        previousPageTitle: 'Coaches',
-      ),
-      child: _buildBody()
-    );
-  }
-
   @override
   Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos);
+    return FutureBuilder(
+      future: _getCoachClasses(),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SafeArea(child: Text('Waiting'));
+        } else {
+          return CupertinoPageScaffold(
+              navigationBar: CupertinoNavigationBar(
+                middle: Text(widget.coach),
+                previousPageTitle: 'Coaches',
+              ),
+              child: _buildBody()
+          );
+        }
+    });
   }
 }

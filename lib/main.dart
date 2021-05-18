@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:running_society/config/config.dart';
@@ -63,6 +65,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
   @override
   void initState() {
     super.initState();
+    initializeDBConnection();
     TencentImPlugin.initSDK(appid: appId.toString());
     _children = [HomeTab(), CoachesTab(), ProfileTab()];
   }
