@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:running_society/coaches_tab/schedule_tab.dart';
 import 'package:running_society/config/db_utils.dart';
+import 'package:running_society/widgets/app_bar.dart';
 
 import '../variables.dart';
 import '../widgets/widgets.dart';
@@ -168,12 +169,9 @@ class _CoachDetailTabState extends State<CoachDetailTab> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return SafeArea(child: Text('Waiting'));
         } else {
-          return CupertinoPageScaffold(
-              navigationBar: CupertinoNavigationBar(
-                middle: Text(widget.coach),
-                previousPageTitle: 'Coaches',
-              ),
-              child: _buildBody()
+          return Scaffold(
+            appBar: CustomAppBar(widget.coach, true),
+            body: _buildBody(),
           );
         }
     });

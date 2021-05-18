@@ -1,9 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/animation.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:running_society/theme.dart';
 import 'package:running_society/widgets/app_bar.dart';
 import 'package:tencent_im_plugin/entity/conversation_entity.dart';
@@ -162,7 +158,7 @@ class _ChatViewState extends State<ChatView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(widget.conversation.showName ?? "加载中..."),
+      appBar: CustomAppBar("群聊", true),
       body: Column(
         children: [
           Expanded(

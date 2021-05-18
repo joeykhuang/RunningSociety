@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:running_society/call_view/call_view.dart';
 import 'package:running_society/theme.dart';
+import 'package:running_society/widgets/app_bar.dart';
 
 class HomeTab extends StatelessWidget {
   static const title = 'Home';
@@ -162,6 +163,9 @@ class HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildBody(context);
+    return Scaffold(
+      appBar: CustomAppBar('Home', false),
+      body: _buildBody(context),
+    );
   }
 }

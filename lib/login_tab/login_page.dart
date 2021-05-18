@@ -1,9 +1,13 @@
+import 'package:dbcrypt/dbcrypt.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:running_society/config/cloudbase.dart';
+import 'package:running_society/config/config.dart';
+import 'package:running_society/main.dart';
 import 'package:running_society/theme.dart';
 
-import '../widgets/snackbar.dart';
+import 'package:running_society/widgets/snackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'sign_up.dart';
 
 class LoginPage extends StatefulWidget {
@@ -20,30 +24,39 @@ class _LoginPageState extends State<LoginPage>
   Color left = Colors.deepOrangeAccent;
   Color right = Colors.black;
 
-  TextEditingController loginEmailController = TextEditingController();
+  TextEditingController loginUsernameController = TextEditingController();
   TextEditingController loginPasswordController = TextEditingController();
 
-  final FocusNode focusNodeEmail = FocusNode();
+  final FocusNode focusNodeUsername = FocusNode();
   final FocusNode focusNodePassword = FocusNode();
 
   bool _obscureTextPassword = true;
 
-  /*
-  Future<String> callAuth(String customUserId) async {
-    await cloudBaseFunction.callFunction('token-auth', {
-      'customUserId': customUserId
-    }).then((value) {
-      return value.data['ticket'];
-    }).catchError((err) {
-      return '';
-    });
-    return '';
+  Future<int> callAuth(String username, String password) async {
+    if (conn != null) {
+      var results = await conn!.query("select password, role, id from user where username = \'$username\'");
+      print(results);
+      if (results.isEmpty) {
+        return 0; // if the username cannot be found in the db
+      } else {
+        var isCorrect = new DBCrypt().checkpw(password, results.first.values![0] as String);
+        if (isCorrect) {
+          var prefs = await SharedPreferences.getInstance();
+          prefs.setInt('userId', results.first.values![2] as int);
+          prefs.setString('role', results.first.values![1] as String);
+          return 1; // on correct login
+        } else {
+          return -1; // on incorrect login
+        }
+      }
+    } else {
+      throw Error();
+    }
   }
-   */
 
   @override
   void dispose() {
-    focusNodeEmail.dispose();
+    focusNodeUsername.dispose();
     focusNodePassword.dispose();
     _pageController.dispose();
     super.dispose();
@@ -107,8 +120,8 @@ class _LoginPageState extends State<LoginPage>
                             padding: const EdgeInsets.only(
                                 top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                             child: TextField(
-                              focusNode: focusNodeEmail,
-                              controller: loginEmailController,
+                              focusNode: focusNodeUsername,
+                              controller: loginUsernameController,
                               keyboardType: TextInputType.emailAddress,
                               style: const TextStyle(
                                   fontFamily: 'WorkSansSemiBold',
@@ -121,7 +134,7 @@ class _LoginPageState extends State<LoginPage>
                                   color: Colors.black,
                                   size: 22.0,
                                 ),
-                                hintText: 'Email Address',
+                                hintText: 'Username',
                                 hintStyle: TextStyle(
                                     fontFamily: 'WorkSansSemiBold', fontSize: 17.0),
                               ),
@@ -258,14 +271,16 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future<void> _toggleSignInButton(BuildContext context) async {
-    /*
-    var ticket = await callAuth(loginEmailController.text + ":" + loginPasswordController.text);
-    await auth.signInWithTicket(ticket).then((success) => Navigator.of(context).pop()
-    ).catchError((err) {
-      CustomSnackBar(context, Text('Sign in Failed'));
-      loginEmailController.clear();
-    });
-     */
+    var loginStatus = await callAuth(loginUsernameController.text, loginPasswordController.text);
+    if (loginStatus == 1) {
+      Navigator.of(context).pushReplacement(
+          CupertinoPageRoute(builder: (context) => PlatformAdaptingHomePage())
+      );
+    } else if (loginStatus == -1) {
+      CustomSnackBar(context, Text("Password incorrect. Please login again."));
+    } else if (loginStatus == 0) {
+      CustomSnackBar(context, Text("Did you sign up yet?"));
+    }
   }
 
   void _toggleLogin() {

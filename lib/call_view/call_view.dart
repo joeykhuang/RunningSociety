@@ -146,7 +146,7 @@ class _CallViewState extends State<CallView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar('In Class'),
+      appBar: CustomAppBar('In Class', true),
       body: Center(
         child: Column(
           children: [

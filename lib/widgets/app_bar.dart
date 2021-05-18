@@ -7,8 +7,10 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
   final Size preferredSize;
 
   final String title;
+  final bool poppable;
+  final Widget? actions;
 
-  CustomAppBar(this.title) : preferredSize = Size.fromHeight(50.0);
+  CustomAppBar(this.title, this.poppable, [this.actions]) : preferredSize = Size.fromHeight(50.0);
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +22,25 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
       backgroundColor: Colors.white,
       automaticallyImplyLeading: true,
       shadowColor: Colors.transparent,
-      leading: GestureDetector(
+      leading: !poppable ? GestureDetector(
         onTap: () {},
         child: Icon(
           CupertinoIcons.line_horizontal_3_decrease,
           color: CustomTheme.orangeTint,
         ),
+        ) : GestureDetector(
+        onTap: () {Navigator.of(context).pop();},
+        child: Icon(
+          CupertinoIcons.back,
+          color: CustomTheme.orangeTint,
+        ),
       ),
+      actions: [
+        Padding(
+          padding: EdgeInsets.only(right: 20),
+          child: this.actions,
+        )
+      ],
     );
   }
 }

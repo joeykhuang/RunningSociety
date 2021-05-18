@@ -1,4 +1,5 @@
 import 'package:mysql1/mysql1.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final String envName = 'running-society-app-3cas7433972e'; // env id
 final String appKey = 'deaac04436be838554c134dd72c95b3a'; // app access key
@@ -16,6 +17,7 @@ final ConnectionSettings settings = new ConnectionSettings(
 );
 
 MySqlConnection? conn;
+SharedPreferences? prefs;
 
 void initializeDBConnection() async {
   conn = await MySqlConnection.connect(settings);

@@ -35,6 +35,7 @@ dependencies:
   permission_handler: ^7.1.0
   tencent_im_plugin: ^2.0.2
   mysql1: ^0.19.2
+  dbcrypt: ^2.0.0
 
 
 dev_dependencies:

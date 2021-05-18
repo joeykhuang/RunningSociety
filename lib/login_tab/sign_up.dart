@@ -1,5 +1,8 @@
+import 'package:dbcrypt/dbcrypt.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:running_society/config/config.dart';
 import 'package:running_society/theme.dart';
 import 'package:running_society/widgets/snackbar.dart';
 
@@ -15,23 +18,36 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final FocusNode focusNodePassword = FocusNode();
   final FocusNode focusNodeConfirmPassword = FocusNode();
-  final FocusNode focusNodeEmail = FocusNode();
+  final FocusNode focusNodeUsername = FocusNode();
   final FocusNode focusNodeName = FocusNode();
 
   bool _obscureTextPassword = true;
   bool _obscureTextConfirmPassword = true;
 
-  TextEditingController signupEmailController = TextEditingController();
+  TextEditingController signupUsernameController = TextEditingController();
   TextEditingController signupNameController = TextEditingController();
   TextEditingController signupPasswordController = TextEditingController();
-  TextEditingController signupConfirmPasswordController =
-      TextEditingController();
+  TextEditingController signupConfirmPasswordController = TextEditingController();
+
+  Future<int?> signupUser(String username, String name, String password) async {
+    if (conn != null) {
+      var hashedPassword = new DBCrypt().hashpw(password, new DBCrypt().gensalt());
+      var result = await conn?.query("insert into user (username, name, password) "
+          "values (\'$username\', \'$name\', \'$hashedPassword\')");
+      if (result?.insertId != null){
+        return result?.insertId;
+      }
+      return 0;
+    } else {
+      throw Error();
+    }
+  }
 
   @override
   void dispose() {
     focusNodePassword.dispose();
     focusNodeConfirmPassword.dispose();
-    focusNodeEmail.dispose();
+    focusNodeUsername.dispose();
     focusNodeName.dispose();
     super.dispose();
   }
@@ -108,7 +124,7 @@ class _SignUpState extends State<SignUp> {
                                         fontFamily: 'WorkSansSemiBold', fontSize: 16.0),
                                   ),
                                   onSubmitted: (_) {
-                                    focusNodeEmail.requestFocus();
+                                    focusNodeUsername.requestFocus();
                                   },
                                 ),
                               ),
@@ -121,8 +137,8 @@ class _SignUpState extends State<SignUp> {
                                 padding: const EdgeInsets.only(
                                     top: 20.0, bottom: 5, left: 25.0, right: 25.0),
                                 child: TextField(
-                                  focusNode: focusNodeEmail,
-                                  controller: signupEmailController,
+                                  focusNode: focusNodeUsername,
+                                  controller: signupUsernameController,
                                   keyboardType: TextInputType.emailAddress,
                                   autocorrect: false,
                                   style: const TextStyle(
@@ -135,7 +151,7 @@ class _SignUpState extends State<SignUp> {
                                       FontAwesomeIcons.envelope,
                                       color: Colors.black,
                                     ),
-                                    hintText: 'Email Address',
+                                    hintText: 'Username',
                                     hintStyle: TextStyle(
                                         fontFamily: 'WorkSansSemiBold', fontSize: 16.0),
                                   ),
@@ -277,7 +293,7 @@ class _SignUpState extends State<SignUp> {
                                   fontFamily: 'WorkSansBold'),
                             ),
                           ),
-                          onPressed: (){}
+                          onPressed: (){ _toggleSignUpButton(context);}
                         ),
                       )
                     ],
@@ -302,26 +318,20 @@ class _SignUpState extends State<SignUp> {
         ));
   }
 
-  //Future<void> _toggleSignUpButton() async {
-  //  final response = await gotrueClient.signUp(signupEmailController.text, signupPasswordController.text);
-  //  if (response.error != null) {
-  //    CustomSnackBar(context, Text('Sign Up Failed'));
-  //    signupPasswordController.clear();
-  //    signupConfirmPasswordController.clear();
-  //  } else if (response.data == null && response.user == null) {
-  //    CustomSnackBar(context, Text('Email Verification Required'));
-  //  } else {
-  //    var prefs = await SharedPreferences.getInstance();
-  //    await prefs.setString(persistSessionKey, response.data!.persistSessionString);
-  //    await Navigator.of(context).push<void>(
-  //      MaterialPageRoute(
-  //        builder: (context) {
-  //          return LoginPage();
-  //        },
-  //      ),
-  //    );
-  //  }
-  //}
+  Future<void> _toggleSignUpButton(BuildContext context) async {
+    if (signupPasswordController.text != signupConfirmPasswordController.text) {
+      signupConfirmPasswordController.clear();
+      CustomSnackBar(context, Text("Please retype your password"));
+      return;
+    }
+    var userId = await signupUser(signupUsernameController.text,
+        signupNameController.text, signupPasswordController.text);
+    if (userId != 0) {
+      Navigator.of(context).pop();
+    } else {
+      CustomSnackBar(context, Text("Sign up failed. Please retry"));
+    }
+  }
 
   void _toggleSignup() {
     setState(() {

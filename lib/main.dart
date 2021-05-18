@@ -2,30 +2,38 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:running_society/config/config.dart';
 import 'package:running_society/widgets/app_bar.dart';
 import 'package:running_society/widgets/navigation_bar.dart';
-import 'package:running_society/config/cloudbase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tencent_im_plugin/tencent_im_plugin.dart';
 
 import 'home_tab/home.dart';
 import 'coaches_tab/coaches_tab.dart';
 import 'login_tab/login_page.dart';
 import 'profile_tab/profile_tab.dart';
+import 'config/config.dart';
 
-void main() => runApp(MyAdaptingApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  initializeDBConnection();
+  prefs = await SharedPreferences.getInstance();
+  var userId = prefs?.getInt('userIdd');
+  runApp(MyAdaptingApp(home: userId != null ? PlatformAdaptingHomePage(): LoginPage()));
+}
 
 class MyAdaptingApp extends StatelessWidget {
+  final StatefulWidget home;
+  const MyAdaptingApp({required this.home});
+
   @override
   Widget build(context) {
     // Either Material or Cupertino widgets work in either Material or Cupertino
     // Apps.
     return MaterialApp(
-      title: 'Adaptive Music App',
+      title: 'Running Society',
       theme: ThemeData(
         // Use the green theme for Material widgets.
         primarySwatch: Colors.green,
@@ -33,14 +41,11 @@ class MyAdaptingApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       builder: (context, child) {
         return CupertinoTheme(
-          // Instead of letting Cupertino widgets auto-adapt to the Material
-          // theme (which is green), this app will use a different theme
-          // for Cupertino (which is blue by default).
           data: CupertinoThemeData(),
           child: Material(child: child),
         );
       },
-      home: PlatformAdaptingHomePage(),
+      home: home
     );
   }
 }
@@ -65,23 +70,13 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
   @override
   void initState() {
     super.initState();
-    initializeDBConnection();
     TencentImPlugin.initSDK(appid: appId.toString());
-    _children = [HomeTab(), CoachesTab(), ProfileTab()];
+    _children = [HomeTab(), CoachesTab(prefs!.getString('role') == 'coach'), ProfileTab()];
   }
-
-  /*
-  Future<void> _login() async {
-    var tempLoginStatus = await auth.getAuthState();
-    if (tempLoginStatus == null) {
-      Navigator.of(context).push<void>(CupertinoPageRoute(builder: (context) => LoginPage()));
-    }
-  }
-   */
 
   Widget _buildHomePage(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar('Home'),
+      //appBar: CustomAppBar(''),
       body: _children[_selectedIndex],
       bottomNavigationBar: NavigationBar(
         onTabSelected: (value) {
