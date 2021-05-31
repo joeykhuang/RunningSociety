@@ -97,12 +97,14 @@ extension WorkoutTracking: WorkoutTrackingProtocol {
             let infoToRead = Set([
                 HKSampleType.quantityType(forIdentifier: .stepCount)!,
                 HKSampleType.quantityType(forIdentifier: .heartRate)!,
+                HKSampleType.quantityType(forIdentifier: .distanceWalkingRunning)!,
                 HKSampleType.workoutType()
                 ])
             
             let infoToShare = Set([
                 HKSampleType.quantityType(forIdentifier: .stepCount)!,
                 HKSampleType.quantityType(forIdentifier: .heartRate)!,
+                HKSampleType.quantityType(forIdentifier: .distanceWalkingRunning)!,
                 HKSampleType.workoutType()
                 ])
             

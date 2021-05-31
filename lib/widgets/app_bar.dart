@@ -26,13 +26,13 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
         onTap: () {},
         child: Icon(
           CupertinoIcons.line_horizontal_3_decrease,
-          color: CustomTheme.orangeTint,
+          color: CustomTheme.lemonTint,
         ),
         ) : GestureDetector(
         onTap: () {Navigator.of(context).pop();},
         child: Icon(
           CupertinoIcons.back,
-          color: CustomTheme.orangeTint,
+          color: CustomTheme.lemonTint,
         ),
       ),
       actions: [

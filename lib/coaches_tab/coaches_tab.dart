@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:running_society/config/config.dart';
 import 'package:running_society/config/db_utils.dart';
 import 'package:running_society/theme.dart';
 import 'package:running_society/variables.dart';
@@ -12,12 +12,13 @@ import 'add_class_tab.dart';
 import 'coach_detail_tab.dart';
 
 class CoachesTab extends StatefulWidget {
-  static const title = 'Coaches';
+  static const title = '教练';
   static const androidIcon = Icon(Icons.music_note);
   static const iosIcon = Icon(CupertinoIcons.person_3_fill);
 
   final bool isCoach;
-  const CoachesTab(this.isCoach);
+  int? coachId;
+  CoachesTab(this.isCoach, [this.coachId]);
 
   @override
   _CoachesTabState createState() => _CoachesTabState();
@@ -36,6 +37,9 @@ class _CoachesTabState extends State<CoachesTab> {
   Future<void> _getCoaches() async {
     numCoaches = await dbGetNumCoaches();
     coaches = await dbGetCoaches();
+    if (widget.isCoach) {
+      widget.coachId = prefs?.getInt('userId');
+    }
   }
 
   Widget _listBuilder(BuildContext context, int index) {
@@ -74,12 +78,12 @@ class _CoachesTabState extends State<CoachesTab> {
           return Scaffold(
             appBar: widget.isCoach ? CustomAppBar('Coaches', false, GestureDetector(
               onTap: () => Navigator.of(context).push(
-                  CupertinoPageRoute(builder: (context) => AddClassTab())),
+                  CupertinoPageRoute(builder: (context) => AddClassTab(coachId: widget.coachId!))),
               child: Icon(
                 CupertinoIcons.add,
-                color: CustomTheme.orangeTint,
+                color: CustomTheme.lemonTint,
               ),
-            )) : CustomAppBar('Coaches', false),
+            )) : CustomAppBar('教练', false),
             body: CustomScrollView(
               slivers: [
                 SliverSafeArea(

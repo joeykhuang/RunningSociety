@@ -2,13 +2,15 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:async/async.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:running_society/widgets/app_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'package:running_society/widgets/calendar_utils/utils.dart';
-import 'package:running_society/widgets/widgets.dart';
 import 'package:running_society/variables.dart';
 import 'package:running_society/config/db_utils.dart';
+import 'package:running_society/theme.dart';
 
 class ScheduleTab extends StatefulWidget {
 
@@ -22,7 +24,7 @@ class ScheduleTab extends StatefulWidget {
 class _SchedulePageState extends State<ScheduleTab>
     with SingleTickerProviderStateMixin {
 
-  late final ValueNotifier<List<Event>> _selectedEvents;
+  late ValueNotifier<List<Event>> _selectedEvents;
   late Results eventsRaw;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff;
@@ -30,6 +32,8 @@ class _SchedulePageState extends State<ScheduleTab>
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
+
+  final memoizer = AsyncMemoizer();
 
   LinkedHashMap<DateTime, List<Event>> kEvents = LinkedHashMap<DateTime, List<Event>>(
     equals: isSameDay,
@@ -40,15 +44,17 @@ class _SchedulePageState extends State<ScheduleTab>
     eventsRaw = await dbGetEventsForClass(widget.classId, day.toString().substring(0, 10));
     var eventsList = List<Event>.generate(eventsRaw.length, (index) => Event(
         eventsRaw.elementAt(index).values![0] as int,
-        (eventsRaw.elementAt(index).values![1] as Duration).toString()));
+        (eventsRaw.elementAt(index).values![1] as Duration).toString().substring(0, 5)));
     kEvents.addEntries({MapEntry(day, eventsList)});
+    this.memoizer.runOnce(() async {
+      _selectedEvents = ValueNotifier(_getEventsForDay(_focusedDay));
+    });
   }
 
   @override
   void initState() {
     super.initState();
     _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }
 
   @override
@@ -80,7 +86,6 @@ class _SchedulePageState extends State<ScheduleTab>
         _rangeEnd = null;
         _rangeSelectionMode = RangeSelectionMode.toggledOff;
       });
-
       _selectedEvents.value = _getEventsForDay(selectedDay);
     }
   }
@@ -108,7 +113,7 @@ class _SchedulePageState extends State<ScheduleTab>
     return Scaffold(
       body: Column(
         children: [
-          Padding(padding: const EdgeInsets.only(top: 100)),
+          Padding(padding: const EdgeInsets.only(top: 20)),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TableCalendar<Event>(
@@ -123,9 +128,17 @@ class _SchedulePageState extends State<ScheduleTab>
               eventLoader: _getEventsForDay,
               startingDayOfWeek: StartingDayOfWeek.monday,
               calendarStyle: CalendarStyle(
+                selectedDecoration: ShapeDecoration(
+                  color: CustomTheme.lightOrangeTint, shape: CircleBorder(),
+                ),
+                todayDecoration: ShapeDecoration(
+                  color: CustomTheme.lightGray, shape: CircleBorder(),
+                ),
+                todayTextStyle: TextStyle(color: Colors.black87),
+                selectedTextStyle: TextStyle(color: Colors.black87),
                 markerSizeScale: 0.15,
                 markerDecoration: ShapeDecoration(
-                  color: Colors.blueGrey, shape: CircleBorder(),
+                  color: CustomTheme.lemonTint, shape: CircleBorder(),
                 ),
                 outsideDaysVisible: false,
               ),
@@ -153,12 +166,12 @@ class _SchedulePageState extends State<ScheduleTab>
                   itemBuilder: (context, index) {
                     var container = Container(
                       margin: const EdgeInsets.symmetric(
-                        horizontal: 12.0,
-                        vertical: 4.0,
+                        horizontal: 20.0,
+                        vertical: 8.0,
                       ),
                       decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: CustomTheme.lightOrangeTint,
                       ),
                       child: ListTile(
                         onTap: () {
@@ -168,7 +181,7 @@ class _SchedulePageState extends State<ScheduleTab>
                             context: context,
                             builder: (context) {
                               return CupertinoActionSheet(
-                                title: Text('${value[index]}'),
+                                title: Text('${value[index].title}'),
                                 actions: [
                                   CupertinoActionSheetAction(
                                     child: const Text('Schedule'),
@@ -187,7 +200,11 @@ class _SchedulePageState extends State<ScheduleTab>
                             },
                           );
                         },
-                        title: Text('${value[index]}'),
+                        title: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text('${value[index].title}',
+                          style: TextStyle(fontSize: 18, color: Colors.black87),),
+                        ),
                       ),
                     );
                     return container;
@@ -207,14 +224,11 @@ class _SchedulePageState extends State<ScheduleTab>
       future: _getDayEvents(DateTime.now()),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return SafeArea(child: Text('Waiting'));
+          return SafeArea(child: Container(),);
         } else {
-          return CupertinoPageScaffold(
-            navigationBar: CupertinoNavigationBar(
-              middle: Text('Schedule'),
-              previousPageTitle: 'Coaches',
-            ),
-            child: _buildBody(),
+          return Scaffold(
+            appBar: CustomAppBar("预约", true),
+            body: _buildBody(),
           );
         }
     });

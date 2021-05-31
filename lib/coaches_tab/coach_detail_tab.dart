@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:running_society/coaches_tab/schedule_tab.dart';
 import 'package:running_society/config/db_utils.dart';
+import 'package:running_society/theme.dart';
 import 'package:running_society/widgets/app_bar.dart';
 
 import '../variables.dart';
@@ -35,9 +36,11 @@ class CoachAvailableClass extends StatelessWidget {
               right: 20,
               child: Container(
                 height: 60,
-                color: Colors.black12,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: CustomTheme.lightOrangeTint
+                ),
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(horizontal: 12),
                 child: ScheduleButton(
                   className: className,
                   classId: classId,
@@ -67,7 +70,7 @@ class ScheduleButton extends StatelessWidget {
       color: Colors.transparent,
       child: Text(
         className,
-        style: TextStyle(color: Colors.black45),
+        style: TextStyle(color: Colors.black87),
       ),
       onPressed: () => Navigator.of(context).push<void>(
         MaterialPageRoute(

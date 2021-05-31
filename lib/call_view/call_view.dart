@@ -37,6 +37,7 @@ class _CallViewState extends State<CallView> {
   String _distance = '0 KM';
   static const channel = const MethodChannel('myWatchChannel');
   final eventChannel = const EventChannel('heartRateStreamChannel');
+  final eventChannelSteps = const EventChannel('stepsStreamChannel');
 
   late ConversationEntity _conversation;
 
@@ -64,6 +65,13 @@ class _CallViewState extends State<CallView> {
     print(heartRate);
     setState(() {
       _heartRate = heartRate;
+    });
+  }
+
+  _stepsHandler(dynamic event) {
+    final String steps = event.toString();
+    setState(() {
+      _steps = steps + ' Steps';
     });
   }
   // ignore: always_declare_return_types
@@ -122,7 +130,7 @@ class _CallViewState extends State<CallView> {
     TencentRtcPlugin.addListener(_rtcListener);
     TencentRtcPlugin.enableAudioVolumeEvaluation(intervalMs: 100);
     _room = 123456;
-    _user = 'joey';
+    _user = prefs!.getInt('userId').toString();
     _enabledMicrophone = false;
     _users[_user] = null;
     _onLogin();
@@ -132,6 +140,7 @@ class _CallViewState extends State<CallView> {
       TencentRtcPlugin.startLocalAudio();
     }
     eventChannel.receiveBroadcastStream().listen(_heartRateHandler);
+    eventChannelSteps.receiveBroadcastStream().listen(_stepsHandler);
     channel.invokeMethod('beginWorkout');
   }
 
@@ -185,7 +194,7 @@ class _CallViewState extends State<CallView> {
                 children: [
                   Icon(
                     CupertinoIcons.heart,
-                    color: CustomTheme.orangeTint,
+                    color: CustomTheme.lemonTint,
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 20),
@@ -209,7 +218,7 @@ class _CallViewState extends State<CallView> {
                           padding: EdgeInsets.only(left: 20),
                           child: Icon(
                             CupertinoIcons.time,
-                            color: CustomTheme.orangeTint,
+                            color: CustomTheme.lemonTint,
                           ),
                       )
                     ]
@@ -221,7 +230,7 @@ class _CallViewState extends State<CallView> {
                     children: [
                       Icon(
                         Icons.run_circle_outlined,
-                        color: CustomTheme.orangeTint,
+                        color: CustomTheme.lemonTint,
                       ),
                       Padding(
                           padding: EdgeInsets.only(left: 20),
@@ -245,7 +254,7 @@ class _CallViewState extends State<CallView> {
                           padding: EdgeInsets.only(left: 20),
                           child: Icon(
                             CupertinoIcons.placemark_fill,
-                            color: CustomTheme.orangeTint,
+                            color: CustomTheme.lemonTint,
                           ),
                       )
                     ]

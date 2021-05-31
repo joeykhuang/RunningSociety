@@ -40,6 +40,8 @@ extension InterfaceController: WorkoutTrackingDelegate {
     
     func didReceiveHealthKitStepCounts(_ stepCounts: Double) {
         stepsLabel.setText("\(stepCounts) STEPS")
+        print(stepCounts)
+        WatchKitConnection.shared.sendMessage(message: ["steps": "\(stepCounts)" as AnyObject])
     }
 }
 

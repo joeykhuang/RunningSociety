@@ -255,7 +255,7 @@ class _ChatViewState extends State<ChatView> {
                   OutlinedButton(
                     onPressed: _onSend,
                     child: Text("发送"),
-                    style: ButtonStyle(foregroundColor: MaterialStateProperty.all(CustomTheme.orangeTint)),
+                    style: ButtonStyle(foregroundColor: MaterialStateProperty.all(CustomTheme.lemonTint)),
                   )
                 ],
               ),

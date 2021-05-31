@@ -43,7 +43,7 @@ class _NavigationBarState extends State<NavigationBar> {
           onPressed: () => onPressed(index),
           child: Icon(item.icon,
             color: _selectedIndex == index
-                ? CustomTheme.orangeTint
+                ? CustomTheme.lemonTint
                 : Colors.black45,
             size: 24
           ),

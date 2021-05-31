@@ -46,3 +46,12 @@ void dbAddToRegistry(int userId, int scheduleId, int classId) async {
     throw Error();
   }
 }
+
+Future<int> dbAddToSchedules(int classId, String date, String time) async {
+  if (conn != null) {
+    await conn!.query('insert into schedule (class_id, date, time) values (?, ?, ?)', [classId, date, time]);
+    return 1;
+  } else {
+    throw Error();
+  }
+}

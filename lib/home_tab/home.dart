@@ -5,7 +5,7 @@ import 'package:running_society/theme.dart';
 import 'package:running_society/widgets/app_bar.dart';
 
 class HomeTab extends StatelessWidget {
-  static const title = 'Home';
+  static const title = '探索';
   static const androidIcon = Icon(Icons.home);
   static const iosIcon = Icon(CupertinoIcons.home);
 
@@ -46,7 +46,7 @@ class HomeTab extends StatelessWidget {
                 CupertinoButton(
                     child: Icon(
                       CupertinoIcons.search,
-                      color: CustomTheme.orangeTint,
+                      color: CustomTheme.lemonTint,
                     ),
                     onPressed: null)
               ],
@@ -73,7 +73,7 @@ class HomeTab extends StatelessWidget {
                     children: [
                       Icon(
                         CupertinoIcons.placemark_fill,
-                        color: CustomTheme.orangeTint,
+                        color: CustomTheme.lemonTint,
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 5),
