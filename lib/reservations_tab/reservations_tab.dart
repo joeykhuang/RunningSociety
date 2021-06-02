@@ -1,13 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart';
 import 'package:running_society/call_view/call_view.dart';
-import 'package:running_society/config/config.dart';
-import 'package:running_society/config/db_utils.dart';
 import 'package:running_society/theme.dart';
-import 'package:running_society/variables.dart';
 import 'package:running_society/widgets/app_bar.dart';
-import 'package:running_society/widgets/widgets.dart';
 
 class ReservationsTab extends StatefulWidget {
   static const title = '我的预约';
@@ -35,7 +30,7 @@ class _ReservationsTabState extends State<ReservationsTab> {
               height: 100,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: Colors.black12
+                color: CustomTheme.lightGray
               ),
               child: Padding(
                 padding: EdgeInsets.all(5),
@@ -45,7 +40,7 @@ class _ReservationsTabState extends State<ReservationsTab> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Text("0"),
+                        Text("4"),
                         Text("累计天数")
                       ],
                     ),
@@ -53,7 +48,7 @@ class _ReservationsTabState extends State<ReservationsTab> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children:[
-                        Text("0"),
+                        Text("7"),
                         Text("累计次数")
                       ]
                     )
@@ -109,7 +104,7 @@ class _ReservationsTabState extends State<ReservationsTab> {
               ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: Colors.black12
+                color: CustomTheme.lightGray
               ),
             )
           ),
@@ -179,7 +174,7 @@ class _ReservationsTabState extends State<ReservationsTab> {
                         ),
                       ],
                     ),
-                    color: Colors.black12,
+                    color: CustomTheme.lightGray,
                   ),
                 );
               })

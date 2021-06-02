@@ -58,9 +58,8 @@ class _AddClassTabState extends State<AddClassTab> {
               child: ListView.builder(
                 itemCount: coachClasses.length + 1,
                 itemBuilder: (context, index) {
-                  return PressableColorCard(
+                  return Container(
                     color: Colors.transparent,
-                    flattenAnimation: AlwaysStoppedAnimation(1),
                     child: SizedBox(
                       height: 70,
                       child: Stack(

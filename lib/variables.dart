@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 import 'widgets/calendar_utils/utils.dart';
 
-final List<AssetImage> coachImages = [AssetImage('assets/coaches_images/daniel.jpg'), AssetImage('assets/coaches_images/elvis.jpg'), AssetImage('assets/coaches_images/kelton.jpg')];
 final kNow = DateTime.now();
 final kFirstDay = DateTime(kNow.year, kNow.month, kNow.day);
 final kLastDay = DateTime(kNow.year, kNow.month + 1, kNow.day);

@@ -9,52 +9,6 @@ import 'package:running_society/widgets/app_bar.dart';
 import '../variables.dart';
 import '../widgets/widgets.dart';
 
-/// Coach available times
-class CoachAvailableClass extends StatelessWidget {
-  CoachAvailableClass({
-    required this.className,
-    required this.classId,
-  });
-
-  final String className;
-  final int classId;
-
-  @override
-  Widget build(BuildContext context) {
-    return PressableColorCard(
-      color: Colors.transparent,
-      flattenAnimation: AlwaysStoppedAnimation(1),
-      child: SizedBox(
-        height: 70,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // The coach title banner slides off in the hero animation.
-            Positioned(
-              bottom: 5,
-              left: 20,
-              right: 20,
-              child: Container(
-                height: 60,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: CustomTheme.lightOrangeTint
-                ),
-                alignment: Alignment.centerLeft,
-                child: ScheduleButton(
-                  className: className,
-                  classId: classId,
-                ),
-              ),
-            ),
-            // The play button grows in the hero animation.
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class ScheduleButton extends StatelessWidget {
   ScheduleButton({
     required this.className,
@@ -67,7 +21,7 @@ class ScheduleButton extends StatelessWidget {
   @override
   Widget build(context) {
     return CupertinoButton(
-      color: Colors.transparent,
+      color: CustomTheme.lemonTint,
       child: Text(
         className,
         style: TextStyle(color: Colors.black87),
@@ -85,12 +39,12 @@ class CoachDetailTab extends StatefulWidget {
   const CoachDetailTab({
     required this.id,
     required this.coach,
-    required this.image,
+    //required this.image,
   });
 
   final int id;
   final String coach;
-  final AssetImage image;
+  //final AssetImage image;
 
   @override
   _CoachDetailTabState createState() => _CoachDetailTabState();
@@ -117,7 +71,7 @@ class _CoachDetailTabState extends State<CoachDetailTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Hero(
+          /*Hero(
             tag: widget.id,
             child: HeroAnimatingCoachCard(
               coach: widget.coach,
@@ -137,6 +91,7 @@ class _CoachDetailTabState extends State<CoachDetailTab> {
               );
             },
           ),
+           */
           Divider(
             height: 0,
             color: Colors.grey,
@@ -152,7 +107,7 @@ class _CoachDetailTabState extends State<CoachDetailTab> {
             child: ListView.builder(
               itemCount: coachClasses.length,
               itemBuilder: (context, index) {
-                return CoachAvailableClass(
+                return ScheduleButton(
                   className: coachClasses.elementAt(index).values![1] as String,
                   classId: coachClasses.elementAt(index).values![0] as int,
                 );

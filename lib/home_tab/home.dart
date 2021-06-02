@@ -32,7 +32,7 @@ class HomeTab extends StatelessWidget {
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: Colors.black12,
+                      color: CustomTheme.lightGray,
                     ),
                   ),
                   child: TextField(
@@ -114,7 +114,7 @@ class HomeTab extends StatelessWidget {
                   ),
                 ],
               ),
-              color: Colors.black12,
+              color: CustomTheme.lightGray,
             ),
           ),
           Container(

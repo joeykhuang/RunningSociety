@@ -1,375 +1,67 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:running_society/coaches_tab/coach_detail_tab.dart';
+import 'package:running_society/theme.dart';
 
-/// A simple widget that builds different things on different platforms.
-class PlatformWidget extends StatelessWidget {
-  const PlatformWidget({
-    Key? key,
-    required this.androidBuilder,
-    required this.iosBuilder,
-  }) : super(key: key);
+class CoachCard extends StatelessWidget {
+  final int coachId;
+  final String? imageLink;
+  final String coachName;
+  final String coachDesc;
 
-  final WidgetBuilder androidBuilder;
-  final WidgetBuilder iosBuilder;
-
-  @override
-  Widget build(context) {
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.android:
-        return androidBuilder(context);
-      case TargetPlatform.iOS:
-        return iosBuilder(context);
-      default:
-        assert(false, 'Unexpected platform $defaultTargetPlatform');
-        return SizedBox.shrink();
-    }
-  }
-}
-
-/// A platform-agnostic card with a high elevation that reacts when tapped.
-///
-/// This is an example of a custom widget that an app developer might create for
-/// use on both iOS and Android as part of their brand's unique design.
-
-class PressableColorCard extends StatefulWidget {
-  const PressableColorCard({
-    this.onPressed,
-    required this.color,
-    required this.flattenAnimation,
-    this.child,
+  CoachCard({
+    required this.coachId,
+    required this.coachName,
+    required this.coachDesc,
+    this.imageLink,
   });
 
-  final VoidCallback? onPressed;
-  final Animation<double> flattenAnimation;
-  final Widget? child;
-  final Color color;
-
   @override
-  State<StatefulWidget> createState() => _PressableColorCardState();
-}
-
-class PressableImageCard extends StatefulWidget {
-  const PressableImageCard({
-    this.onPressed,
-    required this.image,
-    required this.flattenAnimation,
-    this.child,
-  });
-
-  final VoidCallback? onPressed;
-  final Animation<double> flattenAnimation;
-  final Widget? child;
-  final AssetImage image;
-
-  @override
-  State<StatefulWidget> createState() => _PressableImageCardState();
-}
-
-class _PressableColorCardState extends State<PressableColorCard>
-    with SingleTickerProviderStateMixin {
-  bool pressed = false;
-  late final AnimationController controller;
-  late final Animation<double> elevationAnimation;
-
-  @override
-  void initState() {
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 40),
-    );
-    elevationAnimation =
-        controller.drive(CurveTween(curve: Curves.easeInOutCubic));
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  double get flatten => 1 - widget.flattenAnimation.value;
-
-  @override
-  Widget build(context) {
-    return Listener(
-      onPointerDown: (details) {
-        if (widget.onPressed != null) {
-          controller.forward();
-        }
-      },
-      onPointerUp: (details) {
-        controller.reverse();
-      },
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 30.0),
       child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          widget.onPressed?.call();
-        },
-        // This widget both internally drives an animation when pressed and
-        // responds to an external animation to flatten the card when in a
-        // hero animation. You likely want to modularize them more in your own
-        // app.
-        child: AnimatedBuilder(
-          animation:
-          Listenable.merge([elevationAnimation, widget.flattenAnimation]),
-          child: widget.child,
-          builder: (context, child) {
-            return Transform.scale(
-              // This is just a sample. You likely want to keep the math cleaner
-              // in your own app.
-              scale: 1 - elevationAnimation.value * 0.03,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16) *
-                    flatten,
-                child: PhysicalModel(
-                  elevation:
-                  ((1 - elevationAnimation.value) * 10 + 10) * flatten,
-                  borderRadius: BorderRadius.circular(12 * flatten),
-                  clipBehavior: Clip.antiAlias,
-                  color: widget.color,
-                  child: child,
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class _PressableImageCardState extends State<PressableImageCard>
-    with SingleTickerProviderStateMixin {
-  bool pressed = false;
-  late final AnimationController controller;
-  late final Animation<double> elevationAnimation;
-
-  @override
-  void initState() {
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 40),
-    );
-    elevationAnimation =
-        controller.drive(CurveTween(curve: Curves.easeInOutCubic));
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  double get flatten => 1 - widget.flattenAnimation.value;
-
-  @override
-  Widget build(context) {
-    return Listener(
-      onPointerDown: (details) {
-        if (widget.onPressed != null) {
-          controller.forward();
-        }
-      },
-      onPointerUp: (details) {
-        controller.reverse();
-      },
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          widget.onPressed?.call();
-        },
-        // This widget both internally drives an animation when pressed and
-        // responds to an external animation to flatten the card when in a
-        // hero animation. You likely want to modularize them more in your own
-        // app.
-        child: AnimatedBuilder(
-          animation:
-              Listenable.merge([elevationAnimation, widget.flattenAnimation]),
-          child: widget.child,
-          builder: (context, child) {
-            return Transform.scale(
-              // This is just a sample. You likely want to keep the math cleaner
-              // in your own app.
-              scale: 1 - elevationAnimation.value * 0.03,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16) *
-                    flatten,
-                child: PhysicalModel(
-                    elevation:
-                    ((1 - elevationAnimation.value) * 10 + 10) * flatten,
-                    borderRadius: BorderRadius.circular(12 * flatten),
-                    clipBehavior: Clip.antiAlias,
-                    color: Colors.transparent,
-                    child: child,
-                  ),
-                ),
-              );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-/// A platform-agnostic card representing a coach which can be in a card state,
-/// a flat state or anything in between.
-///
-/// When it's in a card state, it's pressable.
-///
-/// This is an example of a custom widget that an app developer might create for
-/// use on both iOS and Android as part of their brand's unique design.
-class HeroAnimatingCoachCard extends StatelessWidget {
-  HeroAnimatingCoachCard({
-    required this.coach,
-    required this.image,
-    required this.heroAnimation,
-    this.onPressed,
-  });
-
-  final String coach;
-  final AssetImage image;
-  final Animation<double> heroAnimation;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(context) {
-    // This is an inefficient usage of AnimatedBuilder since it's rebuilding
-    // the entire subtree instead of passing in a non-changing child and
-    // building a transition widget in between.
-    //
-    // Left simple in this demo because this card doesn't have any real inner
-    // content so this just rebuilds everything while animating.
-    return AnimatedBuilder(
-      animation: heroAnimation,
-      builder: (context, child) {
-        return PressableImageCard(
-          onPressed: heroAnimation.value == 0 ? onPressed : null,
-          image: image,
-          flattenAnimation: heroAnimation,
-          child: SizedBox(
-            height: 320,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // The coach title banner slides off in the hero animation.
-                Positioned(
-                  bottom: -80 * heroAnimation.value,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 45,
-                    color: Colors.black12,
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text(
-                      coach,
-                      style: TextStyle(
-                        fontSize: 21,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-                // The play button grows in the hero animation.
-                Padding(
-                  padding:
-                      EdgeInsets.only(bottom: 45) * (1 - heroAnimation.value),
-                  child: Image(
-                      image: image,
-                    )
-                  ),
-              ],
+        onTap: () => Navigator.of(context).push<void>(
+          MaterialPageRoute(
+            builder: (context) => CoachDetailTab(
+              id: this.coachId,
+              coach: this.coachName
             ),
           ),
-        );
-      },
-    );
-  }
-}
-
-// ===========================================================================
-// Non-shared code below because different interfaces are shown to prompt
-// for a multiple-choice answer.
-//
-// This is a design choice and you may want to do something different in your
-// app.
-// ===========================================================================
-/// This uses a platform-appropriate mechanism to show users multiple choices.
-///
-/// On Android, it uses a dialog with radio buttons. On iOS, it uses a picker.
-void showChoices(BuildContext context, List<String> choices) {
-  switch (defaultTargetPlatform) {
-    case TargetPlatform.android:
-      showDialog<void>(
-        context: context,
-        builder: (context) {
-          int? selectedRadio = 1;
-          return AlertDialog(
-            contentPadding: EdgeInsets.only(top: 12),
-            content: StatefulBuilder(
-              builder: (context, setState) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List<Widget>.generate(choices.length, (index) {
-                    return RadioListTile<int?>(
-                      title: Text(choices[index]),
-                      value: index,
-                      groupValue: selectedRadio,
-                      onChanged: (value) {
-                        setState(() => selectedRadio = value);
-                      },
-                    );
-                  }),
-                );
-              },
-            ),
-            actions: [
-              TextButton(
-                child: Text('OK'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              TextButton(
-                child: Text('CANCEL'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    case TargetPlatform.iOS:
-      showCupertinoModalPopup<void>(
-        context: context,
-        builder: (context) {
-          return SizedBox(
-            height: 250,
-            child: CupertinoPicker(
-              backgroundColor: Theme.of(context).canvasColor,
-              useMagnifier: true,
-              magnification: 1.1,
-              itemExtent: 40,
-              scrollController: FixedExtentScrollController(initialItem: 1),
-              children: List<Widget>.generate(choices.length, (index) {
-                return Center(
-                  child: Text(
-                    choices[index],
-                    style: TextStyle(
-                      fontSize: 21,
-                    ),
+        ),
+        child: SizedBox(
+          width: 175,
+          child: Column(
+            children: [
+              Container(
+                width: 175,
+                height: 90,
+                decoration: BoxDecoration(
+                  color: CustomTheme.lemonTint,
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(this.coachName, style: TextStyle(fontSize: 18),),
+                      Text(this.coachDesc, style: TextStyle(fontSize: 12),),
+                    ]
                   ),
-                );
-              }),
-              onSelectedItemChanged: (value) {},
-            ),
-          );
-        },
-      );
-      return;
-    default:
-      assert(false, 'Unexpected platform $defaultTargetPlatform');
+                ),
+              ),
+              Stack(
+                children: [
+                  imageLink != null?Image.network(this.imageLink!, width: 175,):Container(),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
