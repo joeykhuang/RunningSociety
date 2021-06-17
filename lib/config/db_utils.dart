@@ -13,7 +13,16 @@ Future<int> dbGetNumCoaches() async {
 
 Future<Results> dbGetCoaches() async {
   if (conn != null) {
-    var results = await conn!.query('select * from coach');
+    var results = await conn!.query('select id, name, image_url, desc_short from coach');
+    return results;
+  } else {
+    throw Error();
+  }
+}
+
+Future<Results> dbGetCoachDetail(int id) async {
+  if (conn != null) {
+    var results = await conn!.query('select desc_long, ranking from coach where id = ${id.toString()}');
     return results;
   } else {
     throw Error();
@@ -29,9 +38,9 @@ Future<Results> dbGetClasses(int coachId) async {
   }
 }
 
-Future<Results> dbGetEventsForClass(int classId, String date) async {
+Future<Results> dbGetEventsForCoach(int coachId, String date) async {
   if (conn != null) {
-    String query = 'select id, time from schedule where class_id = ${classId.toString()} and date = \"$date\"';
+    String query = 'select id, class_name, time, class_length from schedule join class on schedule.class_id = class.class_id where schedule.coach_id = ${coachId.toString()} and date = \"$date\"';
     var results = await conn!.query(query);
     return results;
   } else {

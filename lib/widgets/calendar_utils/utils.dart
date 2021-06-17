@@ -2,13 +2,15 @@ import 'dart:math';
 
 /// Example event class.
 class Event {
-  final String title;
+  final String classTime;
+  final String className;
   final int scheduleId;
+  final int classLength;
 
-  const Event(this.scheduleId, this.title);
+  const Event(this.scheduleId, this.className, this.classTime, this.classLength);
 
   @override
-  String toString() => title;
+  String toString() => classTime;
 }
 
 int getHashCode(DateTime key) {

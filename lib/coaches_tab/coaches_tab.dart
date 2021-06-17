@@ -36,6 +36,9 @@ class _CoachesTabState extends State<CoachesTab> {
     coaches = await dbGetCoaches();
     if (widget.isCoach) {
       widget.coachId = prefs?.getInt('userId');
+      print(widget.coachId);
+    } else {
+      print("not coach");
     }
   }
 

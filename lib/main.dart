@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:running_society/config/config.dart';
 import 'package:running_society/reservations_tab/reservations_tab.dart';
-import 'package:running_society/widgets/app_bar.dart';
 import 'package:running_society/widgets/navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tencent_im_plugin/tencent_im_plugin.dart';
@@ -21,6 +20,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   initializeDBConnection();
   prefs = await SharedPreferences.getInstance();
+  print("prefs instantiated");
   var userId = prefs?.getInt('userId');
   runApp(MyAdaptingApp(home: userId != null ? PlatformAdaptingHomePage(): LoginPage()));
 }
@@ -74,14 +74,13 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
     TencentImPlugin.initSDK(appid: appId.toString());
     _children = [
       HomeTab(),
-      CoachesTab(prefs!.getString('role') == 'coach'),
+      CoachesTab(prefs?.getString('role') == 'coach'),
       ReservationsTab(),
       ProfileTab()];
   }
 
   Widget _buildHomePage(BuildContext context) {
     return Scaffold(
-      //appBar: CustomAppBar(''),
       body: _children[_selectedIndex],
       bottomNavigationBar: NavigationBar(
         onTabSelected: (value) {

@@ -26,7 +26,8 @@ class CoachCard extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => CoachDetailTab(
               id: this.coachId,
-              coach: this.coachName
+              coach: this.coachName,
+              imageLink: this.imageLink,
             ),
           ),
         ),
